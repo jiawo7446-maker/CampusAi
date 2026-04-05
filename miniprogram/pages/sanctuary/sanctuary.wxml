@@ -1,0 +1,218 @@
+<view class="page page-fade">
+  <top-nav page-title="树洞" />
+
+  <scroll-view
+    scroll-y
+    class="page-scroll"
+    style="height: calc(100vh - {{navBarHeight}}px); padding-top: {{navBarHeight + 16}}px; box-sizing: border-box"
+    refresher-enabled
+    refresher-triggered="{{isRefreshing}}"
+    bindrefresherrefresh="onRefresh"
+    refresher-background="#f9f5ff"
+    enhanced
+    show-scrollbar="{{false}}"
+  >
+  <view class="content" style="padding-bottom: {{tabBarBottom + 24}}px">
+    <!-- ===== 标题区 ===== -->
+    <view class="section-header">
+      <text class="hero-title">校园树洞社区</text>
+      <text class="hero-sub">分享此刻心情，遇见温暖回应</text>
+    </view>
+
+    <!-- ===== 发布框 ===== -->
+    <view class="compose-card">
+      <view class="compose-top">
+        <view class="compose-icon-wrap">
+          <image class="compose-icon" src="/assets/icons/brain-primary.svg" mode="aspectFit" />
+        </view>
+        <textarea
+          class="compose-textarea"
+          placeholder="这一刻的想法..."
+          placeholder-class="compose-placeholder"
+          value="{{inputContent}}"
+          bindinput="onInputChange"
+          auto-height
+          maxlength="500"
+        />
+      </view>
+      <view wx:if="{{draftImage}}" class="compose-draft-img-wrap">
+        <image class="compose-draft-img" src="{{draftImage}}" mode="aspectFill" bindtap="onPreviewDraftImage" />
+        <view class="compose-draft-img-rm" bindtap="onRemoveDraftImage">✕</view>
+      </view>
+      <view class="compose-actions">
+        <view class="compose-tools">
+          <view class="tool-btn" bindtap="onMoodToolTap">
+            <text class="tool-mood-emoji">{{selectedMoodEmoji || '🙂'}}</text>
+            <text class="tool-text">{{selectedMoodLabel || '心情'}}</text>
+          </view>
+          <view class="tool-btn" bindtap="onImageToolTap">
+            <image class="tool-icon" src="/assets/icons/image-icon.svg" mode="aspectFit" />
+            <text class="tool-text">{{draftImage ? '已选图' : '图片'}}</text>
+          </view>
+          <view class="tool-btn {{isAnonymous ? 'tool-btn--active' : ''}}" bindtap="onAnonymousTap">
+            <image class="tool-icon" src="/assets/icons/lock.svg" mode="aspectFit" />
+            <text class="tool-text">匿名</text>
+          </view>
+        </view>
+        <view class="btn-publish" bindtap="onPublishPost">发布树洞</view>
+      </view>
+    </view>
+
+    <!-- ===== 筛选标签 ===== -->
+    <scroll-view scroll-x class="filter-scroll" enable-flex>
+      <view
+        wx:for="{{filters}}"
+        wx:key="index"
+        class="filter-chip {{activeFilter === item ? 'filter-chip--active' : ''}}"
+        bindtap="onFilterTap"
+        data-filter="{{item}}"
+      >
+        <text class="filter-chip-text">{{item}}</text>
+      </view>
+    </scroll-view>
+
+    <!-- ===== 帖子列表 ===== -->
+    <view class="posts-list">
+      <!-- Skeleton loading cards -->
+      <block wx:if="{{isLoading}}">
+        <view wx:for="{{[1,2,3]}}" wx:key="index" class="post-card skeleton-card">
+          <view class="sk-row">
+            <view class="sk-avatar"></view>
+            <view class="sk-lines">
+              <view class="sk-line sk-line--med"></view>
+              <view class="sk-line sk-line--short"></view>
+            </view>
+          </view>
+          <view class="sk-line sk-line--full" style="margin-top:24rpx"></view>
+          <view class="sk-line sk-line--long" style="margin-top:12rpx"></view>
+          <view class="sk-line sk-line--short" style="margin-top:12rpx"></view>
+        </view>
+      </block>
+      <!-- Empty state -->
+      <view wx:if="{{!isLoading && filteredPosts.length === 0}}" class="posts-empty">
+        <text class="posts-empty__icon">🌿</text>
+        <text class="posts-empty__title">暂时没有相关动态</text>
+        <text class="posts-empty__sub">试试其他分类，或者成为第一个分享的人</text>
+      </view>
+      <!-- Actual posts -->
+      <view wx:if="{{!isLoading}}" wx:for="{{filteredPosts}}" wx:key="id" class="post-card">
+        <!-- 帖子头部 -->
+        <view class="post-header">
+          <view class="post-author-row">
+            <view class="post-avatar">
+              <image class="post-avatar-icon" src="/assets/icons/user-surface.svg" mode="aspectFit" />
+            </view>
+            <view>
+              <text class="post-author">{{item.author}}</text>
+              <text class="post-time">{{item.time}}</text>
+            </view>
+          </view>
+          <image class="post-more" src="/assets/icons/more-horizontal.svg" mode="aspectFit" />
+        </view>
+
+        <!-- 帖子内容 -->
+        <view class="post-body">
+          <image
+            wx:if="{{item.image}}"
+            class="post-image"
+            src="{{item.image}}"
+            mode="aspectFill"
+            bindtap="onImageTap"
+            data-src="{{item.image}}"
+          />
+          <text class="post-content">{{item.content}}</text>
+        </view>
+
+        <!-- AI 回复 -->
+        <view class="ai-reply ai-reply--{{item.aiColor}}">
+          <view class="ai-reply-header">
+            <image class="ai-reply-icon" src="{{item.aiIconPath}}" mode="aspectFit" />
+            <text class="ai-reply-name">{{item.aiName}}</text>
+          </view>
+          <text class="ai-reply-text">{{item.aiReply}}</text>
+        </view>
+
+        <!-- 互动区 -->
+        <view wx:if="{{!item.hideFooter}}" class="post-footer">
+          <view class="post-actions">
+            <view class="action-btn" bindtap="onLikeTap" data-id="{{item.id}}">
+              <image
+                class="action-icon"
+                src="{{item.liked ? '/assets/icons/heart-filled.svg' : '/assets/icons/heart.svg'}}"
+                mode="aspectFit"
+              />
+              <text class="action-count {{item.liked ? 'action-count--liked' : ''}}">{{item.likes}}</text>
+            </view>
+            <view class="action-btn" bindtap="onCommentTap" data-id="{{item.id}}">
+              <image class="action-icon" src="/assets/icons/message-circle.svg" mode="aspectFit" />
+              <text class="action-count">{{item.comments}}</text>
+            </view>
+            <view class="action-btn" bindtap="onSaveTap" data-id="{{item.id}}">
+              <text class="action-save-icon {{item.saved ? 'action-save-icon--saved' : ''}}">{{item.saved ? '🔖' : '☆'}}</text>
+            </view>
+          </view>
+          <view
+            class="action-primary {{item.hugged ? 'action-primary--hugged' : ''}}"
+            bindtap="onActionTap"
+            data-id="{{item.id}}"
+            data-text="{{item.actionText}}"
+          >{{item.actionText}}</view>
+        </view>
+      </view>
+    </view>
+  </view>
+  </scroll-view>
+
+  <!-- ===== 评论弹窗 ===== -->
+  <view class="modal-mask" wx:if="{{showCommentModal}}" bindtap="onCloseComment">
+    <view class="comment-sheet" catchtap="preventClose" style="padding-bottom: {{tabBarBottom + 24}}px">
+      <view class="comment-header">
+        <view class="comment-back" bindtap="onCloseComment">‹ 返回</view>
+        <text class="comment-title">评论</text>
+        <view class="comment-header-placeholder"></view>
+      </view>
+      <scroll-view scroll-y class="comment-list">
+        <view wx:for="{{activeCommentList}}" wx:key="id" class="comment-item">
+          <text class="comment-author">{{item.author}}</text>
+          <text class="comment-text">{{item.text}}</text>
+        </view>
+        <view wx:if="{{activeCommentList.length === 0}}">
+          <text style="font-size:26rpx;color:#75729e;text-align:center;display:block;padding:32rpx">还没有评论，来说第一句话吧</text>
+        </view>
+      </scroll-view>
+      <view class="comment-input-row">
+        <input
+          class="comment-input"
+          placeholder="说点什么..."
+          value="{{commentInput}}"
+          bindinput="onCommentInput"
+          confirm-type="send"
+          bindconfirm="onSendComment"
+        />
+        <view class="comment-send" bindtap="onSendComment">发送</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- ===== 心情选择弹窗 ===== -->
+  <view class="mood-mask" wx:if="{{showMoodPicker}}" bindtap="onMoodPickerClose">
+    <view class="mood-panel" catchtap="preventClose">
+      <text class="mood-panel-title">选择此刻心情</text>
+      <view class="mood-grid">
+        <view
+          wx:for="{{moods}}"
+          wx:key="label"
+          class="mood-option {{selectedMoodLabel === item.label ? 'mood-option--active' : ''}}"
+          bindtap="onMoodSelect"
+          data-emoji="{{item.emoji}}"
+          data-label="{{item.label}}"
+        >
+          <text class="mood-option-emoji">{{item.emoji}}</text>
+          <text class="mood-option-label">{{item.label}}</text>
+        </view>
+      </view>
+      <view class="mood-cancel" bindtap="onMoodPickerClose">取消</view>
+    </view>
+  </view>
+
+</view>

@@ -1,0 +1,92 @@
+<view class="page">
+  <!-- ===== 顶部装饰区 ===== -->
+  <view class="login-hero">
+    <view class="hero-blob hero-blob--1"></view>
+    <view class="hero-blob hero-blob--2"></view>
+    <view class="hero-blob hero-blob--3"></view>
+    <view class="hero-logo-wrap">
+      <view class="hero-logo-ring">
+        <view class="hero-logo-circle">
+          <image class="hero-logo-icon" src="/assets/icons/bot-white.svg" mode="aspectFit" />
+        </view>
+      </view>
+      <view class="hero-ai-badge"><text class="hero-ai-badge-text">AI</text></view>
+    </view>
+    <text class="hero-app-name">智校 · AI生活助手</text>
+    <text class="hero-slogan">轻应用 · 智能服务 · 校园生活</text>
+    <view class="hero-chips">
+      <view class="hero-chip"><text>⏰ 时间管理</text></view>
+      <view class="hero-chip"><text>🤝 互助广场</text></view>
+      <view class="hero-chip"><text>💚 健康打卡</text></view>
+      <view class="hero-chip"><text>🌿 树洞社区</text></view>
+    </view>
+  </view>
+
+  <!-- ===== 登录卡片 ===== -->
+  <view class="login-card">
+    <text class="card-title">欢迎回来 👋</text>
+    <text class="card-sub">登录以继续你的校园之旅</text>
+
+    <!-- 手机号输入 -->
+    <view class="input-group">
+      <text class="input-label">手机号</text>
+      <view class="input-wrap {{focusField === 'user' ? 'input-wrap--focused' : ''}}">
+        <image class="input-icon" src="/assets/icons/user-surface.svg" mode="aspectFit" />
+        <input
+          class="input-field"
+          placeholder="请输入手机号"
+          placeholder-class="input-placeholder"
+          type="number"
+          maxlength="11"
+          value="{{username}}"
+          bindinput="onUsernameInput"
+          bindfocus="onFocus"
+          bindblur="onBlur"
+          data-field="user"
+        />
+      </view>
+    </view>
+
+    <!-- 密码输入 -->
+    <view class="input-group">
+      <text class="input-label">密码</text>
+      <view class="input-wrap {{focusField === 'pwd' ? 'input-wrap--focused' : ''}}">
+        <image class="input-icon" src="/assets/icons/lock.svg" mode="aspectFit" />
+        <input
+          class="input-field"
+          placeholder="请输入密码"
+          placeholder-class="input-placeholder"
+          password="{{!showPwd}}"
+          value="{{password}}"
+          bindinput="onPasswordInput"
+          bindfocus="onFocus"
+          bindblur="onBlur"
+          data-field="pwd"
+        />
+        <view class="pwd-toggle" bindtap="onTogglePwd">
+          <text class="pwd-toggle-text">{{showPwd ? '隐藏' : '显示'}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 登录按钮 -->
+    <view class="btn-login {{loading ? 'btn-login--loading' : ''}}" bindtap="onLogin">
+      <text class="btn-login-text">{{loading ? '登录中...' : '登录'}}</text>
+    </view>
+    <view class="security-note">
+      <text class="security-text">🔒 登录信息已加密保护</text>
+    </view>
+
+    <!-- 注册 & 访客 -->
+    <view class="bottom-links">
+      <view class="register-row">
+        <text class="register-text">还没有账号？</text>
+        <text class="register-link" bindtap="onGoRegister">立即注册</text>
+      </view>
+      <view class="link-sep"></view>
+      <view class="guest-link" bindtap="onGuestEntry">
+        <text class="guest-text">以访客身份浏览 →</text>
+      </view>
+    </view>
+  </view>
+</view>

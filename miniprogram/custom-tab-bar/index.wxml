@@ -1,0 +1,22 @@
+<view class="tab-bar" style="padding-bottom: {{safeBottom + 16}}px">
+  <view
+    wx:for="{{list}}"
+    wx:key="pagePath"
+    class="tab-item {{selected === index ? 'tab-item--active' : ''}}"
+    hover-class="tab-item-hover"
+    hover-stay-time="80"
+    bindtap="switchTab"
+    data-path="{{item.pagePath}}"
+    data-index="{{index}}"
+  >
+    <view class="tab-icon-wrap">
+      <image
+        class="tab-icon"
+        src="{{selected === index ? item.activeIcon : item.icon}}"
+        mode="aspectFit"
+      />
+    </view>
+    <text class="tab-text">{{item.text}}</text>
+    <view class="tab-dot {{selected === index ? 'tab-dot--active' : ''}}"></view>
+  </view>
+</view>

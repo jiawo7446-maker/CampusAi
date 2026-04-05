@@ -1,0 +1,48 @@
+{
+  "healthScore": 84,
+  "sleepRecord": [
+    40,
+    60,
+    30,
+    80,
+    50,
+    90,
+    75
+  ],
+  "emotionHistory": [
+    {
+      "id": 1775383608957,
+      "label": "平静",
+      "emoji": "🍃",
+      "time": "今天 18:06"
+    },
+    {
+      "id": 1,
+      "label": "元气满满",
+      "emoji": "⚡",
+      "time": "今天 09:30"
+    },
+    {
+      "id": 2,
+      "label": "平静",
+      "emoji": "🍃",
+      "time": "昨天 21:00"
+    },
+    {
+      "id": 3,
+      "label": "疲惫",
+      "emoji": "😴",
+      "time": "昨天 14:20"
+    }
+  ],
+  "checkinState": {
+    "1775377602231": "1775377602231:2026-3-5"
+  },
+  "userStats": {
+    "default": {
+      "streakDays": 13,
+      "totalCheckins": 13,
+      "lastCheckinDate": null
+    }
+  }
+}

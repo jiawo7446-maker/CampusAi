@@ -1,0 +1,295 @@
+<view class="page page-fade">
+  <top-nav page-title="脉动" />
+
+  <scroll-view
+    scroll-y
+    class="page-scroll"
+    style="height: calc(100vh - {{navBarHeight}}px); padding-top: {{navBarHeight + 16}}px; box-sizing: border-box"
+    refresher-enabled
+    refresher-triggered="{{isRefreshing}}"
+    bindrefresherrefresh="onRefresh"
+    refresher-background="#f9f5ff"
+    enhanced
+    show-scrollbar="{{false}}"
+  >
+  <view class="content" style="padding-bottom: {{tabBarBottom + 24}}px">
+    <!-- ===== 标题区域 ===== -->
+    <view class="section">
+      <text class="hero-title">智校为你推荐</text>
+      <text class="hero-sub">AI 分析校园动态，个性化生活建议</text>
+    </view>
+
+    <!-- ===== 今日流程 ===== -->
+    <view class="section">
+      <view class="section-header">
+        <text class="section-title">今日流程</text>
+        <view class="btn-tag" bindtap="onViewSchedule">查看全部</view>
+      </view>
+      <view wx:if="{{todaySlots.length === 0}}" class="tl-empty">
+        <text class="tl-empty-icon">🌿</text>
+        <view class="tl-empty-text">
+          <text class="tl-empty-title">今天没有课程</text>
+          <text class="tl-empty-sub">好好休息，或去探索校园吧</text>
+        </view>
+        <view class="tl-empty-btn" bindtap="onViewSchedule">管理课表</view>
+      </view>
+      <view class="tl-list">
+        <view wx:for="{{todaySlots}}" wx:key="key" class="tl-row">
+
+          <!-- 课程条目 -->
+          <block wx:if="{{item.type === 'course'}}">
+            <view class="tl-time-col">
+              <text class="tl-time">{{item.startTime}}</text>
+              <view class="tl-dot tl-dot--{{item.color}}"></view>
+              <view class="tl-line" wx:if="{{index < todaySlots.length - 1}}"></view>
+            </view>
+            <view class="tl-course-card tl-course-card--{{item.color}}" bindtap="onViewSchedule">
+              <view class="tl-course-bar tl-course-bar--{{item.color}}"></view>
+              <view class="tl-course-body">
+                <text class="tl-course-name">{{item.name}}</text>
+                <text class="tl-course-room">📍 {{item.room}}</text>
+              </view>
+              <text class="tl-arrow">›</text>
+            </view>
+          </block>
+
+          <!-- 空闲时刻 -->
+          <block wx:if="{{item.type === 'gap'}}">
+            <view class="tl-time-col">
+              <text class="tl-time tl-time--gap">{{item.startTime}}</text>
+              <view class="tl-dot tl-dot--gap"></view>
+              <view class="tl-line" wx:if="{{index < todaySlots.length - 1}}"></view>
+            </view>
+            <view class="tl-gap-card" bindtap="onNeedPlan">
+              <view class="tl-gap-info">
+                <text class="tl-gap-label">空闲时刻</text>
+                <text class="tl-gap-time">{{item.startTime}} - {{item.endTime}}</text>
+              </view>
+              <view class="tl-gap-btn">开始活动</view>
+            </view>
+          </block>
+
+        </view>
+      </view>
+    </view>
+
+    <!-- ===== 需要计划？ ===== -->
+    <view class="plan-card" bindtap="onNeedPlan" hover-class="plan-card-hover" hover-stay-time="80">
+      <view class="plan-card__left">
+        <text class="plan-card__emoji">✨</text>
+        <view class="plan-card__text">
+          <text class="plan-card__title">需要计划？</text>
+          <text class="plan-card__sub">AI 结合你的课程表，帮你规划碎片化时间</text>
+        </view>
+      </view>
+      <view class="plan-card__btn">AI 帮我规划 →</view>
+    </view>
+
+    <!-- ===== 今日美食推荐（横向滑动）===== -->
+    <view class="section">
+      <view class="section-header">
+        <text class="section-title">今日美食推荐</text>
+        <view class="btn-tag" bindtap="onViewMoreFood">查看更多</view>
+      </view>
+      <scroll-view scroll-x class="food-scroll" enable-flex>
+        <view
+          wx:for="{{foods}}"
+          wx:key="id"
+          class="food-slide-card"
+          hover-class="food-slide-hover"
+          hover-stay-time="80"
+          bindtap="onFoodCardTap"
+          data-id="{{item.id}}"
+          data-name="{{item.name}}"
+          style="background-color: {{item.color}}"
+        >
+          <text class="food-slide-emoji">{{item.emoji}}</text>
+          <view class="food-slide-badge">{{item.badge}}</view>
+          <text class="food-slide-name">{{item.name}}</text>
+          <text class="food-slide-desc">{{item.desc}}</text>
+          <view class="food-slide-btn">立即点餐</view>
+        </view>
+      </scroll-view>
+    </view>
+
+    <!-- 自习点推荐小卡 -->
+    <view class="study-card" bindtap="onStudyCardTap">
+      <view class="study-card__left">
+        <view class="study-card__tag">
+          <image class="study-card__tag-icon" src="/assets/icons/sparkles-tertiary.svg" mode="aspectFit" />
+          <text class="study-card__tag-text">AI最佳自习点 · 点击查看全部</text>
+        </view>
+        <text class="study-card__title">去哪学习</text>
+        <text class="study-card__loc">{{studySpots[0].name}} · {{studySpots[0].type}}</text>
+      </view>
+      <view class="study-card__right">
+        <text class="study-card__score">{{studySpots[0].score}}%</text>
+        <text class="study-card__label">安静指数</text>
+      </view>
+    </view>
+
+    <!-- 出行建议卡 -->
+    <view class="nav-card" bindtap="onNavigateTap">
+      <view class="nav-card__content">
+        <text class="nav-card__title">出行建议</text>
+        <text class="nav-card__sub">{{navSub}}</text>
+        <view class="nav-card__dist">
+          <image class="nav-card__arrow" src="/assets/icons/navigation-white.svg" mode="aspectFit" />
+          <text class="nav-card__km">{{navKm}}</text>
+        </view>
+      </view>
+      <view class="nav-card__icon-wrap">
+        <image class="nav-card__icon" src="/assets/icons/map-white.svg" mode="aspectFit" />
+      </view>
+    </view>
+
+    <!-- ===== 校园脉动 ===== -->
+    <view class="section">
+      <view class="section-header">
+        <text class="section-title">校园脉动</text>
+        <view class="btn-tag" bindtap="onViewAllTap">查看全部</view>
+      </view>
+      <view wx:if="{{events.length === 0}}" class="events-empty">
+        <text class="events-empty-text">暂无校园动态，下拉刷新试试 🔄</text>
+      </view>
+      <scroll-view scroll-x class="events-scroll" enable-flex>
+        <view
+          wx:for="{{events}}"
+          wx:key="id"
+          class="event-card"
+          bindtap="onEventTap"
+          data-tag="{{item.tag}}"
+          data-name="{{item.name}}"
+          data-time="{{item.time}}"
+          data-loc="{{item.location}}"
+        >
+          <view class="event-icon event-icon--{{item.color}}">
+            <text class="event-svg-text">📅</text>
+          </view>
+          <view class="event-info">
+            <text class="event-tag event-tag--{{item.color}}">{{item.tag}}</text>
+            <text class="event-name">{{item.name}}</text>
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+
+    <!-- ===== 为你推荐（图片帖子）===== -->
+    <view class="section">
+      <text class="section-title">为你推荐</text>
+      <view class="photo-card" bindtap="onPhotoCardTap">
+        <view class="photo-grid">
+          <image
+            class="photo-item"
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuAv0WdNnWr9oO-n-aDvTUxXgpp0gxaPL2N5kBPj1Gxoj_9617T47Gca6pbG7ye7qQcuzQ__20R_tahYtdBQVWP0ihoaVAuCl8NeAUp0ZJtO4qx3ApkL9BVQkVOdRACsvVNe5GdS-rqKTMLHrcmh21ecWMRggoacr7UsOWzhFlcy54_xsAmhSop6L2i-MdBLDLBX9j9uJRnndX7y7ETXEjV6uAbWk99NVSe52hjBvY4sgYuDwHbK62qoAlojZy2HMbjtcXQonrLewJhZ"
+            mode="aspectFill"
+          />
+          <image
+            class="photo-item"
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBok1eZEnOZWT5mvnq44We29dFAvmJ73iCBneoMKiH69OiLtYAxaNTbS8ulbZ1h_yqwNIaP-Fi2WczUkEK4nhgW0sjFADyd_gCRlxR_a1LEDxvf8sbdV3oPIM8W3QmSNsBbSCtfXcJ0nt6Kg_Pm19JMDyBIx-dG3mswH0kS_-Gm7NKk0Odhxv24ZlBVq09cgTefMugocNJnzetXO4U4VW2XF-G0odTEzjue-s0u7aGlkx-6g9fSDgpnMo85ktKT6S1C4Fu9jF3eXUud"
+            mode="aspectFill"
+          />
+        </view>
+        <view class="photo-caption">
+          <text class="photo-caption__title">校园摄影大赛：捕捉你的流光时刻</text>
+          <text class="photo-caption__sub">已有 1,240 名同学参与投稿</text>
+        </view>
+      </view>
+    </view>
+
+  </view>
+  </scroll-view>
+
+  <!-- ===== 投稿编辑弹窗 ===== -->
+  <view class="submit-mask" wx:if="{{showSubmitModal}}" bindtap="onCancelSubmit">
+    <view class="submit-panel" style="margin-bottom: {{tabBarBottom}}px" catchtap="preventClose">
+      <view class="submit-header">
+        <text class="submit-title">📷 编辑投稿</text>
+        <view class="submit-close-btn" bindtap="onCancelSubmit">✕</view>
+      </view>
+      <scroll-view scroll-y class="submit-scroll">
+        <image class="submit-preview" src="{{submitDraftPath}}" mode="aspectFill" />
+        <view class="submit-form">
+          <text class="submit-label">配图文案</text>
+          <textarea
+            class="submit-textarea"
+            placeholder="写下你想说的话，让作品更有故事感…"
+            placeholder-class="submit-placeholder"
+            maxlength="100"
+            value="{{submitCaption}}"
+            bindinput="onSubmitCaptionInput"
+            auto-height
+          />
+          <text class="submit-count">{{submitCaption.length}}/100</text>
+        </view>
+      </scroll-view>
+      <view class="submit-actions">
+        <view class="submit-btn-cancel" bindtap="onCancelSubmit">取消</view>
+        <view class="submit-btn-confirm" bindtap="onConfirmSubmit">发布投稿</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- ===== 摄影大赛画廊弹窗 ===== -->
+  <view class="gallery-mask" wx:if="{{showGallery}}" bindtap="onGalleryClose">
+    <view class="gallery-panel" catchtap="preventClose">
+
+      <!-- 标题栏 -->
+      <view class="gallery-header">
+        <view class="gallery-close-btn" bindtap="onGalleryClose">✕</view>
+        <view class="gallery-header__mid">
+          <text class="gallery-title">📷 校园摄影大赛</text>
+          <text class="gallery-sub">{{galleryWorks.length}} 件作品 · 截止本周日</text>
+        </view>
+        <view class="gallery-submit-btn" bindtap="onGallerySubmit">+ 投稿</view>
+      </view>
+
+      <!-- 作品网格 -->
+      <scroll-view scroll-y class="gallery-scroll">
+        <view class="gallery-grid" style="padding-bottom: {{tabBarBottom + 24}}px">
+          <view
+            wx:for="{{galleryWorks}}"
+            wx:key="id"
+            class="gallery-item"
+            bindtap="onWorkTap"
+            data-id="{{item.id}}"
+          >
+            <!-- 真实照片 -->
+            <image
+              wx:if="{{item.type === 'photo'}}"
+              class="gallery-photo"
+              src="{{item.imagePath}}"
+              mode="aspectFill"
+            />
+            <!-- Emoji 占位图 -->
+            <view
+              wx:else
+              class="gallery-emoji-wrap"
+              style="background: {{item.bg}}"
+            >
+              <text class="gallery-emoji">{{item.emoji}}</text>
+            </view>
+
+            <!-- 作者行 + 点赞 -->
+            <view class="gallery-item-footer">
+              <view class="gallery-author-row">
+                <view class="gallery-avatar-sm" style="background-color: {{item.avatarBg}}">
+                  <text class="gallery-avatar-initial">{{item.avatarInitial}}</text>
+                </view>
+                <text class="gallery-author-name">{{item.author}}</text>
+              </view>
+              <view class="gallery-like-btn" catchtap="onWorkLike" data-id="{{item.id}}">
+                <text class="gallery-like-text">{{item.liked ? '❤️' : '🤍'}} {{item.likes}}</text>
+              </view>
+            </view>
+
+            <!-- 说明文字 -->
+            <text class="gallery-caption">{{item.caption}}</text>
+          </view>
+        </view>
+      </scroll-view>
+
+    </view>
+  </view>
+
+</view>

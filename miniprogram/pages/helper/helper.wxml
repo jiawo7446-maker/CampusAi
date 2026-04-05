@@ -1,0 +1,259 @@
+<view class="page page-fade">
+  <top-nav page-title="互助广场" />
+
+  <view class="content" style="padding-top: {{navBarHeight + 16}}px; padding-bottom: {{tabBarBottom + 16}}px">
+    <!-- ===== 统计栏 ===== -->
+    <view class="stats-row">
+      <view class="stat-card">
+        <text class="stat-label">互助者在线</text>
+        <view class="stat-value-row">
+          <text class="stat-num">{{onlineCount}}</text>
+          <text class="stat-unit">位</text>
+        </view>
+        <view class="stat-badge">
+          <view class="pulse-dot"></view>
+          <text class="stat-badge-text">实时活跃</text>
+        </view>
+      </view>
+      <view class="stat-card">
+        <text class="stat-label">平均响应</text>
+        <view class="stat-value-row">
+          <text class="stat-num">12</text>
+          <text class="stat-unit">分钟</text>
+        </view>
+        <view class="stat-badge">
+          <image class="stat-zap" src="/assets/icons/zap-primary.svg" mode="aspectFit" />
+          <text class="stat-badge-text stat-badge-text--primary">极速处理</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- ===== 实时需求标题 ===== -->
+    <view class="list-header">
+      <view>
+        <text class="list-title">实时需求</text>
+        <text class="list-sub">发现身边可以伸出援手的机会</text>
+      </view>
+      <view class="urgent-filter-row">
+        <view
+          class="urgent-toggle {{onlyUrgent ? 'urgent-toggle--active' : ''}}"
+          bindtap="onToggleUrgent"
+        >
+          <text class="urgent-toggle-text">⚡ 只看紧急</text>
+        </view>
+        <view class="btn-tag">共 {{displayTasks.length}} 条</view>
+      </view>
+    </view>
+
+    <!-- ===== 任务卡片列表（固定高度可滚动）===== -->
+    <view wx:if="{{onlyUrgent && displayTasks.length === 0}}" class="urgent-empty">
+      <text class="urgent-empty-text">当前没有紧急需求 ✅</text>
+    </view>
+    <view wx:if="{{!onlyUrgent && displayTasks.length === 0}}" class="urgent-empty">
+      <text class="urgent-empty-text">暂无互助需求，来发布第一个吧 🙌</text>
+    </view>
+    <scroll-view scroll-y class="task-list-scroll" enhanced="{{true}}" show-scrollbar="{{false}}"
+      refresher-enabled refresher-triggered="{{isRefreshing}}" bindrefresherrefresh="onRefresh"
+      refresher-background="#f3eeff">
+      <view class="task-list">
+      <view
+        wx:for="{{displayTasks}}"
+        wx:key="id"
+        class="task-card"
+        hover-class="task-card-hover"
+        hover-stay-time="80"
+        bindtap="onViewDetail"
+        data-id="{{item.id}}"
+      >
+        <view class="task-avatar-wrap">
+          <view class="task-avatar-circle" style="background-color: {{item.avatarBg}}">
+            <text class="task-avatar-initial">{{item.avatarInitial}}</text>
+          </view>
+          <view class="task-icon-badge task-icon-badge--{{item.tagColor}}">
+            <image class="task-icon-badge-svg" src="{{item.tagIcon}}" mode="aspectFit" />
+          </view>
+        </view>
+        <view class="task-body">
+          <view class="task-top-row">
+            <text class="task-name">{{item.name}}</text>
+            <view class="task-tag task-tag--{{item.tagColor}}">
+              <text class="task-tag-text">{{item.tag}}</text>
+            </view>
+          </view>
+          <text class="task-desc">{{item.desc}}</text>
+          <view class="task-meta-row">
+            <view class="task-location">
+              <image class="task-location-icon" src="/assets/icons/map-pin-primary.svg" mode="aspectFit" />
+              <text class="task-location-text">{{item.location}}</text>
+            </view>
+            <text class="task-time">{{item.time}}</text>
+          </view>
+          <view wx:if="{{item.reward && item.reward !== '无'}}" class="task-reward-row">
+            <text class="task-reward-text">🎁 {{item.reward}}</text>
+          </view>
+        </view>
+        <view
+          class="btn-accept {{item.accepted ? 'btn-accept--done' : ''}}"
+          catchtap="onAcceptTask"
+          data-id="{{item.id}}"
+        >{{item.accepted ? '已接受 ✓' : '接受任务'}}</view>
+      </view>
+      </view>
+    </scroll-view>
+
+    <!-- ===== 已接受任务 ===== -->
+    <view wx:if="{{acceptedCount > 0}}" class="accepted-section">
+      <text class="accepted-title">我接受的任务 ({{acceptedCount}})</text>
+      <view class="accepted-list">
+        <view
+          wx:for="{{tasks}}"
+          wx:key="id"
+          wx:if="{{item.accepted}}"
+          class="accepted-card"
+          hover-class="task-card-hover"
+          hover-stay-time="80"
+          bindtap="onViewDetail"
+          data-id="{{item.id}}"
+        >
+          <!-- 状态徽标 - 左上角 -->
+          <view class="accepted-card__header">
+            <text class="accepted-badge accepted-badge--{{item.done ? 'done' : 'active'}}">{{item.done ? '✓ 已完成' : '进行中'}}</text>
+          </view>
+          <!-- 主体：左侧信息 + 右侧完成按钮 -->
+          <view class="accepted-card__body">
+            <view class="accepted-card__left">
+              <view class="accepted-tag accepted-tag--{{item.tagColor}}">
+                <image class="accepted-tag__icon" src="{{item.tagIcon}}" mode="aspectFit" />
+              </view>
+              <view class="accepted-card__info">
+                <text class="accepted-card__name">{{item.name}}</text>
+                <text class="accepted-card__desc">{{item.desc}}</text>
+                <view class="task-location" style="margin-top:6rpx">
+                  <image class="task-location-icon" src="/assets/icons/map-pin-primary.svg" mode="aspectFit" />
+                  <text class="task-location-text">{{item.location}}</text>
+                </view>
+              </view>
+            </view>
+            <view
+              class="btn-complete {{item.done ? 'btn-complete--done' : ''}}"
+              catchtap="onCompleteTask"
+              data-id="{{item.id}}"
+            >{{item.done ? '已完成' : '完成'}}</view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- ===== 发布需求横幅 ===== -->
+    <view class="publish-banner">
+      <view class="publish-banner__text">
+        <text class="publish-banner__title">发布你的需求</text>
+        <text class="publish-banner__sub">无论是取外卖还是搬书，互助者们随时准备就绪。</text>
+        <view class="btn-publish" hover-class="btn-publish-hover" hover-stay-time="80" bindtap="onPublishTask">立即发布</view>
+      </view>
+      <image class="publish-banner__icon" src="/assets/icons/tab-users.svg" mode="aspectFit" />
+    </view>
+  </view>
+
+  <!-- ===== 发布任务弹窗 ===== -->
+  <view class="modal-mask" wx:if="{{showPublishModal}}" bindtap="onModalMaskTap">
+    <view class="modal-sheet" catchtap="preventClose" style="padding-bottom: {{tabBarBottom + 24}}px">
+      <text class="modal-title">发布互助需求</text>
+      <view>
+        <text class="modal-label">任务类型</text>
+        <view class="type-row">
+          <view
+            wx:for="{{taskTypes}}"
+            wx:key="index"
+            class="type-chip {{publishForm.type === item ? 'type-chip--active' : ''}}"
+            bindtap="onTypeSelect"
+            data-type="{{item}}"
+          >{{item}}</view>
+        </view>
+      </view>
+      <view>
+        <text class="modal-label">需求描述</text>
+        <textarea
+          class="modal-textarea"
+          placeholder="详细描述你的需求..."
+          placeholder-class="compose-placeholder"
+          value="{{publishForm.desc}}"
+          bindinput="onFormDescInput"
+          maxlength="200"
+        />
+      </view>
+      <view>
+        <text class="modal-label">取件/送达地点</text>
+        <input
+          class="modal-input"
+          placeholder="例如：图书馆5楼 A座"
+          value="{{publishForm.location}}"
+          bindinput="onFormLocInput"
+        />
+      </view>
+      <view>
+        <text class="modal-label">奖励 <text class="modal-label-hint">（红包金额或感谢方式）</text></text>
+        <input
+          class="modal-input"
+          placeholder="例如：5元红包、请奶茶、感谢"
+          value="{{publishForm.reward}}"
+          bindinput="onFormRewardInput"
+          maxlength="30"
+        />
+      </view>
+      <view class="modal-actions">
+        <view class="btn-cancel" bindtap="onCancelPublish">取消</view>
+        <view class="btn-submit" bindtap="onSubmitTask">立即发布</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- ===== 任务详情弹窗 ===== -->
+  <view class="modal-mask" wx:if="{{showDetailModal}}" bindtap="onCloseDetail">
+    <view class="modal-sheet detail-sheet" catchtap="preventClose" style="padding-bottom: {{tabBarBottom + 24}}px">
+      <view class="detail-header">
+        <view class="detail-avatar-wrap">
+          <view class="detail-avatar-circle" style="background-color: {{detailTask.avatarBg}}">
+            <text class="detail-avatar-initial">{{detailTask.avatarInitial}}</text>
+          </view>
+        </view>
+        <view class="task-icon-badge task-icon-badge--{{detailTask.tagColor}}" style="width:44rpx;height:44rpx">
+          <image class="task-icon-badge-svg" src="{{detailTask.tagIcon}}" mode="aspectFit" style="width:22rpx;height:22rpx" />
+        </view>
+        <view class="detail-header__info">
+          <text class="detail-name">{{detailTask.name}}</text>
+          <view class="task-tag task-tag--{{detailTask.tagColor}}" style="align-self:flex-start;margin-top:6rpx">
+            <text class="task-tag-text">{{detailTask.tag}}</text>
+          </view>
+        </view>
+      </view>
+      <view class="detail-divider"></view>
+      <view class="detail-row">
+        <text class="detail-label">需求描述</text>
+        <text class="detail-value">{{detailTask.desc}}</text>
+      </view>
+      <view class="detail-row">
+        <text class="detail-label">地点</text>
+        <view class="task-location">
+          <image class="task-location-icon" src="/assets/icons/map-pin-primary.svg" mode="aspectFit" />
+          <text class="task-location-text" style="font-size:28rpx">{{detailTask.location}}</text>
+        </view>
+      </view>
+      <view class="detail-row">
+        <text class="detail-label">发布时间</text>
+        <text class="detail-value detail-time">{{detailTask.time}}</text>
+      </view>
+      <view wx:if="{{detailTask.reward}}" class="detail-row">
+        <text class="detail-label">奖励</text>
+        <text class="detail-value detail-reward">{{detailTask.reward}}</text>
+      </view>
+      <view class="detail-actions">
+        <view class="btn-cancel" bindtap="onCloseDetail">关闭</view>
+        <view
+          class="btn-submit {{detailTask.accepted ? 'btn-submit--done' : ''}}"
+          catchtap="onAcceptFromDetail"
+        >{{detailTask.accepted ? '已接受 ✓' : '接受此任务'}}</view>
+      </view>
+    </view>
+  </view>
+</view>

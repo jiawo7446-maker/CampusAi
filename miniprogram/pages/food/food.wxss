@@ -1,0 +1,246 @@
+.page {
+  min-height: 100vh;
+  background: #f0f4ff;
+}
+
+/* ── 顶部导航（fixed）── */
+.food-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 100;
+  background: #fff;
+  box-shadow: 0 1px 0 #dde6ff;
+}
+.food-nav-row {
+  height: 88rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.nav-back {
+  width: 72rpx;
+  display: flex;
+  align-items: center;
+  padding-left: 20rpx;
+}
+.nav-back-arrow {
+  font-size: 56rpx;
+  color: #2444eb;
+  line-height: 1;
+}
+.nav-title {
+  flex: 1;
+  text-align: center;
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #1a2d7a;
+}
+.nav-placeholder { width: 72rpx; }
+
+/* ── 滚动主体 ── */
+.scroll-body {
+  height: 100vh;
+}
+
+/* ── AI 横幅（单行精简）── */
+.ai-banner {
+  margin: 24rpx 24rpx 20rpx;
+  background: linear-gradient(135deg, #2444eb 0%, #5566f8 60%, #8999ff 100%);
+  border-radius: 18rpx;
+  padding: 16rpx 20rpx;
+}
+.ai-banner-top {
+  display: flex;
+  align-items: center;
+  margin-bottom: 14rpx;
+}
+.ai-banner-icon {
+  font-size: 28rpx;
+  margin-right: 10rpx;
+}
+.ai-banner-label {
+  font-size: 26rpx;
+  font-weight: 700;
+  color: #fff;
+}
+.ai-stats-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  background: rgba(255,255,255,0.13);
+  border-radius: 14rpx;
+  padding: 14rpx 0;
+  margin-bottom: 14rpx;
+}
+.ai-stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.ai-stat-num {
+  font-size: 30rpx;
+  font-weight: 800;
+  color: #fff;
+}
+.ai-stat-green { color: #6ee7b7; }
+.ai-stat-lbl {
+  font-size: 20rpx;
+  color: rgba(255,255,255,0.65);
+  margin-top: 4rpx;
+}
+.ai-stat-sep {
+  width: 1rpx;
+  height: 36rpx;
+  background: rgba(255,255,255,0.25);
+}
+.ai-insight-text {
+  font-size: 22rpx;
+  color: rgba(255,255,255,0.88);
+  line-height: 1.6;
+  display: block;
+}
+
+/* ── 食物列表 ── */
+.food-list {
+  padding: 0 24rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+/* ── 食物卡片 ── */
+.food-card {
+  background: #fdf6ef;
+  border-radius: 20rpx;
+  overflow: hidden;
+  box-shadow: 0 2rpx 14rpx rgba(160,100,40,0.08);
+  padding: 0 0 16rpx;
+}
+
+/* 上半：图片（左）+ 信息（右）横排 */
+.food-card-top {
+  display: flex;
+  gap: 0;
+  margin-bottom: 0;
+}
+
+.food-img-wrap {
+  position: relative;
+  width: 220rpx;
+  flex-shrink: 0;
+}
+.food-image {
+  width: 220rpx;
+  height: 220rpx;
+  display: block;
+}
+.food-badge {
+  position: absolute;
+  bottom: 10rpx;
+  left: 0;
+  border-radius: 0 20rpx 20rpx 0;
+  padding: 4rpx 14rpx;
+  font-size: 20rpx;
+  color: #fff;
+  font-weight: 600;
+}
+
+/* 右侧信息 */
+.food-info {
+  flex: 1;
+  padding: 16rpx 18rpx 12rpx 16rpx;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.food-header-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 6rpx;
+}
+.food-name {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #1a2d7a;
+  flex: 1;
+  margin-right: 8rpx;
+  line-height: 1.4;
+}
+.food-price {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #2444eb;
+  flex-shrink: 0;
+}
+.food-desc {
+  font-size: 22rpx;
+  color: #9ca3af;
+  margin-bottom: 10rpx;
+  display: block;
+  line-height: 1.4;
+}
+.food-tags-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8rpx;
+  margin-bottom: 10rpx;
+}
+.tag {
+  background: #f5e9d8;
+  color: #92400e;
+  border-radius: 20rpx;
+  padding: 3rpx 14rpx;
+  font-size: 20rpx;
+  font-weight: 500;
+}
+.food-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  flex-wrap: wrap;
+}
+.meta-text {
+  font-size: 21rpx;
+  color: #9ca3af;
+}
+.meta-sep {
+  font-size: 20rpx;
+  color: #d1d5db;
+}
+
+/* ── 卡片底部操作行 ── */
+.card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12rpx 20rpx 4rpx;
+  margin-top: 8rpx;
+}
+.btn-ai {
+  background: #f5e9d8;
+  color: #92400e;
+  border-radius: 50rpx;
+  padding: 10rpx 24rpx;
+  font-size: 22rpx;
+  font-weight: 600;
+}
+.btn-order {
+  background: linear-gradient(135deg, #d97706, #b45309);
+  color: #fff;
+  border-radius: 50rpx;
+  padding: 10rpx 44rpx;
+  font-size: 22rpx;
+  font-weight: 600;
+  letter-spacing: 1rpx;
+}
+
+/* 底部提示 */
+.footer-tip {
+  text-align: center;
+  font-size: 22rpx;
+  color: #5566f8;
+  padding: 28rpx 0 16rpx;
+}

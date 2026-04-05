@@ -1,0 +1,54 @@
+[
+  {
+    "id": 1,
+    "name": "小明",
+    "tag": "餐饮代购",
+    "desc": "需要在图书馆5楼帮带一份食堂三楼的照烧鸡腿饭，谢谢！",
+    "location": "主校区 图书馆",
+    "time": "2分钟前",
+    "accepted": true,
+    "reward": "5元红包",
+    "completed": true
+  },
+  {
+    "id": 2,
+    "name": "大力",
+    "tag": "物流搬运",
+    "desc": "大件快递到校门口了，求一位有平衡车或推车的小伙伴帮忙。",
+    "location": "北门 快递点",
+    "time": "5分钟前",
+    "accepted": true,
+    "reward": "10元红包",
+    "completed": true
+  },
+  {
+    "id": 3,
+    "name": "小红",
+    "tag": "跑腿/借用",
+    "desc": "急借一个Type-C转HDMI转换器，今天下午多媒体课用。",
+    "location": "C区 教学楼",
+    "time": "8分钟前",
+    "accepted": false,
+    "reward": "感谢+借用费"
+  },
+  {
+    "id": 4,
+    "name": "晓雯",
+    "tag": "学习互助",
+    "desc": "高数期末复习，求大神一起学习打卡，我请奶茶！",
+    "location": "B栋 402自习室",
+    "time": "12分钟前",
+    "accepted": false,
+    "reward": "奶茶一杯"
+  },
+  {
+    "id": 5,
+    "name": "阿辉",
+    "tag": "餐饮代购",
+    "desc": "帮我在一食堂买份红烧肉套餐带到宿舍楼B栋，速度快一点哦。",
+    "location": "宿舍楼 B栋",
+    "time": "15分钟前",
+    "accepted": false,
+    "reward": "3元跑腿费"
+  }
+]

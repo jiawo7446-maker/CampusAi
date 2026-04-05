@@ -1,0 +1,214 @@
+<view class="page">
+
+  <!-- ===== 顶部导航 ===== -->
+  <view class="custom-nav" style="padding-top: {{statusBarHeight}}px">
+    <view class="nav-row">
+      <view class="nav-back" bindtap="onBack" hover-class="nav-back-hover" hover-stay-time="80">
+        <text class="nav-back-arrow">‹</text>
+        <text class="nav-back-text">返回</text>
+      </view>
+      <text class="nav-title">我的课程表</text>
+      <view class="nav-add" bindtap="onAddCourse" hover-class="nav-add-hover" hover-stay-time="80">
+        <text class="nav-add-text">＋</text>
+      </view>
+    </view>
+  </view>
+
+  <scroll-view scroll-y class="scroll-body" style="padding-top: {{navHeight + 8}}px; padding-bottom: {{tabBarBottom + 24}}px">
+
+    <!-- ===== 星期选择 ===== -->
+    <scroll-view scroll-x class="day-tabs" enable-flex>
+      <view
+        wx:for="{{days}}"
+        wx:key="index"
+        class="day-tab {{currentDay === index ? 'day-tab--active' : ''}} {{todayIndex === index ? 'day-tab--today' : ''}}"
+        bindtap="onDaySwitch"
+        data-idx="{{index}}"
+      >
+        <text class="day-tab-text">{{item}}</text>
+        <view wx:if="{{todayIndex === index}}" class="day-dot"></view>
+      </view>
+    </scroll-view>
+
+    <view class="content-area">
+
+      <!-- ===== AI 碎片化时间规划卡 ===== -->
+      <view
+        wx:if="{{todayCourseCount > 0}}"
+        class="planner-card"
+        bindtap="onAIPlan"
+        hover-class="planner-card-hover"
+        hover-stay-time="80"
+      >
+        <view class="planner-left">
+          <text class="planner-emoji">🗓️</text>
+          <view class="planner-text">
+            <text class="planner-title">规划今日碎片化时间</text>
+            <text class="planner-sub">AI 帮你把课间空档用起来</text>
+          </view>
+        </view>
+        <text class="planner-arrow">›</text>
+      </view>
+
+      <!-- ===== 无课提示 ===== -->
+      <view wx:if="{{todayCourseCount === 0}}" class="empty-state">
+        <text class="empty-icon">📚</text>
+        <text class="empty-title">今天没有课程</text>
+        <text class="empty-sub">点击右上角 ＋ 添加你的课程</text>
+        <view class="empty-add-btn" bindtap="onAddCourse">添加第一门课</view>
+      </view>
+
+      <!-- ===== 时间轴课程列表 ===== -->
+      <view wx:if="{{todaySlots.length > 0}}" class="slots-list">
+        <view wx:for="{{todaySlots}}" wx:key="index">
+
+          <!-- 课程卡 -->
+          <view wx:if="{{item.type === 'course'}}" class="course-card course-card--{{item.color}}">
+            <view class="course-time-col">
+              <text class="course-time-text">{{item.startTime}}</text>
+              <view class="course-time-bar"></view>
+              <text class="course-time-text">{{item.endTime}}</text>
+            </view>
+            <view class="course-info">
+              <text class="course-name">{{item.name}}</text>
+              <text class="course-room">📍 {{item.room}}</text>
+            </view>
+            <view
+              class="course-del"
+              catchtap="onDeleteCourse"
+              data-id="{{item.id}}"
+            >✕</view>
+          </view>
+
+          <!-- 空档卡 -->
+          <view wx:elif="{{item.type === 'gap'}}" class="gap-row">
+            <view class="gap-line-col">
+              <view class="gap-dot"></view>
+              <view class="gap-vline"></view>
+              <view class="gap-dot"></view>
+            </view>
+            <view class="gap-info">
+              <text class="gap-time">{{item.startTime}} - {{item.endTime}}</text>
+              <text class="gap-dur">空档 {{item.durationText}}</text>
+              <text class="gap-suggest">{{item.suggestion}}</text>
+            </view>
+          </view>
+
+        </view>
+      </view>
+
+    </view>
+  </scroll-view>
+
+  <!-- ===== 添加课程弹窗 ===== -->
+  <view class="modal-mask" wx:if="{{showAddModal}}" bindtap="onCancelAdd">
+    <view class="add-sheet" catchtap="preventClose">
+      <view class="sheet-header">
+        <text class="sheet-title">添加课程</text>
+        <view class="sheet-close" bindtap="onCancelAdd">✕</view>
+      </view>
+
+      <!-- 课程名 -->
+      <view class="field-group">
+        <text class="field-label">课程名称</text>
+        <input class="field-input" placeholder="如：高等数学" value="{{newCourseName}}" bindinput="onNameInput" maxlength="20" />
+      </view>
+
+      <!-- 教室 -->
+      <view class="field-group">
+        <text class="field-label">教室 / 地点</text>
+        <input class="field-input" placeholder="如：A101 教室" value="{{newCourseRoom}}" bindinput="onRoomInput" maxlength="20" />
+      </view>
+
+      <!-- 时间 -->
+      <view class="field-row">
+        <view class="field-group field-half">
+          <text class="field-label">开始时间</text>
+          <input class="field-input" placeholder="08:00" value="{{newCourseStart}}" bindinput="onStartInput" maxlength="5" />
+        </view>
+        <view class="field-group field-half">
+          <text class="field-label">结束时间</text>
+          <input class="field-input" placeholder="09:40" value="{{newCourseEnd}}" bindinput="onEndInput" maxlength="5" />
+        </view>
+      </view>
+
+      <!-- 星期 -->
+      <view class="field-group">
+        <text class="field-label">上课星期</text>
+        <scroll-view scroll-x class="day-picker" enable-flex>
+          <view
+            wx:for="{{days}}"
+            wx:key="index"
+            class="day-pick-item {{newCourseDay === index ? 'day-pick-item--active' : ''}}"
+            bindtap="onDaySelect"
+            data-idx="{{index}}"
+          >{{item}}</view>
+        </scroll-view>
+      </view>
+
+      <!-- 颜色 -->
+      <view class="field-group">
+        <text class="field-label">标签颜色</text>
+        <view class="color-picker">
+          <view
+            wx:for="{{colorOptions}}"
+            wx:key="value"
+            class="color-dot color-dot--{{item.value}} {{newCourseColor === item.value ? 'color-dot--active' : ''}}"
+            bindtap="onColorSelect"
+            data-val="{{item.value}}"
+          >
+            <text class="color-dot-label">{{item.label}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="add-actions">
+        <view class="add-btn-cancel" bindtap="onCancelAdd">取消</view>
+        <view class="add-btn-confirm" bindtap="onConfirmAdd">添加</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- ===== AI 规划结果弹窗 ===== -->
+  <view class="modal-mask" wx:if="{{showAIPlan}}" bindtap="onCloseAIPlan">
+    <view class="ai-sheet" catchtap="preventClose" style="padding-bottom: {{48 + safeAreaBottom}}rpx">
+      <view class="sheet-header">
+        <text class="sheet-title">📅 今日碎片时间规划</text>
+        <view class="sheet-close" bindtap="onCloseAIPlan">✕</view>
+      </view>
+      <scroll-view scroll-y class="ai-content">
+        <view wx:if="{{aiLoading}}" class="ai-loading">
+          <text class="ai-loading-dot">●</text>
+          <text class="ai-loading-text">AI 正在分析你的课程安排...</text>
+        </view>
+        <block wx:else>
+          <text class="ai-plan-text">{{aiPlan}}</text>
+          <view wx:if="{{planEvents.length > 0}}" class="plan-events-section">
+            <text class="plan-events-title">今天校内精彩活动：</text>
+            <view
+              wx:for="{{planEvents}}"
+              wx:key="id"
+              class="plan-event-item"
+              hover-class="plan-event-hover"
+              hover-stay-time="80"
+              bindtap="onPlanEventTap"
+              data-name="{{item.name}}"
+              data-time="{{item.time}}"
+              data-loc="{{item.location}}"
+            >
+              <text class="plan-event-num">{{index + 1}}</text>
+              <view class="plan-event-body">
+                <text class="plan-event-name">{{item.name}}</text>
+                <text class="plan-event-meta">{{item.time}} · {{item.location}}</text>
+              </view>
+              <text class="plan-event-arrow">›</text>
+            </view>
+            <text class="plan-events-hint">感兴趣哪个，点击加入日程！🗺</text>
+          </view>
+        </block>
+      </scroll-view>
+      <view class="ai-close-btn" bindtap="onCloseAIPlan">关闭</view>
+    </view>
+  </view>
+
+</view>

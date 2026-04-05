@@ -1,0 +1,124 @@
+<view class="page">
+  <!-- ===== 顶部 ===== -->
+  <view class="reg-hero">
+    <view class="hero-blob hero-blob--1"></view>
+    <view class="hero-blob hero-blob--2"></view>
+    <view class="back-btn" bindtap="onBack">
+      <text class="back-text">← 返回登录</text>
+    </view>
+    <text class="hero-title">创建账号</text>
+    <text class="hero-sub">加入智校，开启你的 AI 校园生活</text>
+  </view>
+
+  <!-- ===== 注册表单卡片 ===== -->
+  <view class="reg-card">
+    <!-- 昵称 -->
+    <view class="input-group">
+      <text class="input-label">昵称</text>
+      <view class="input-wrap {{focusField === 'name' ? 'input-wrap--focused' : ''}}">
+        <image class="input-icon" src="/assets/icons/user-surface.svg" mode="aspectFit" />
+        <input
+          class="input-field"
+          placeholder="你想让大家怎么称呼你？"
+          placeholder-class="input-placeholder"
+          value="{{nickname}}"
+          bindinput="onNicknameInput"
+          bindfocus="onFocus"
+          bindblur="onBlur"
+          data-field="name"
+        />
+      </view>
+    </view>
+
+    <!-- 手机号 -->
+    <view class="input-group">
+      <text class="input-label">手机号</text>
+      <view class="input-wrap {{focusField === 'phone' ? 'input-wrap--focused' : ''}}">
+        <image class="input-icon" src="/assets/icons/message-circle.svg" mode="aspectFit" />
+        <input
+          class="input-field"
+          placeholder="请输入手机号"
+          placeholder-class="input-placeholder"
+          type="number"
+          maxlength="11"
+          value="{{phone}}"
+          bindinput="onPhoneInput"
+          bindfocus="onFocus"
+          bindblur="onBlur"
+          data-field="phone"
+        />
+      </view>
+    </view>
+
+    <!-- 密码 -->
+    <view class="input-group">
+      <text class="input-label">密码</text>
+      <view class="input-wrap {{focusField === 'pwd' ? 'input-wrap--focused' : ''}}">
+        <image class="input-icon" src="/assets/icons/lock.svg" mode="aspectFit" />
+        <input
+          class="input-field"
+          placeholder="至少6位，包含字母和数字"
+          placeholder-class="input-placeholder"
+          password="{{!showPwd}}"
+          value="{{password}}"
+          bindinput="onPasswordInput"
+          bindfocus="onFocus"
+          bindblur="onBlur"
+          data-field="pwd"
+        />
+        <view class="pwd-toggle" bindtap="onTogglePwd">
+          <text class="pwd-toggle-text">{{showPwd ? '隐藏' : '显示'}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 确认密码 -->
+    <view class="input-group">
+      <text class="input-label">确认密码</text>
+      <view class="input-wrap {{focusField === 'pwd2' ? 'input-wrap--focused' : ''}}">
+        <image class="input-icon" src="/assets/icons/lock.svg" mode="aspectFit" />
+        <input
+          class="input-field"
+          placeholder="再次输入密码"
+          placeholder-class="input-placeholder"
+          password="true"
+          value="{{password2}}"
+          bindinput="onPassword2Input"
+          bindfocus="onFocus"
+          bindblur="onBlur"
+          data-field="pwd2"
+        />
+      </view>
+    </view>
+
+    <!-- 密码强度提示 -->
+    <view wx:if="{{password.length > 0}}" class="pwd-strength">
+      <view class="strength-bar">
+        <view class="strength-fill strength-fill--{{pwdLevel}}" style="width:{{pwdWidth}}"></view>
+      </view>
+      <text class="strength-text strength-text--{{pwdLevel}}">{{pwdLabel}}</text>
+    </view>
+
+    <!-- 协议 -->
+    <view class="terms-row" bindtap="onToggleTerms">
+      <view class="terms-check {{agreedTerms ? 'terms-check--active' : ''}}">
+        <text wx:if="{{agreedTerms}}" class="terms-check__mark">✓</text>
+      </view>
+      <text class="terms-text">我已阅读并同意</text>
+      <text class="terms-link">《用户协议》</text>
+      <text class="terms-text">和</text>
+      <text class="terms-link">《隐私政策》</text>
+    </view>
+
+    <!-- 注册按钮 -->
+    <view class="btn-register {{loading ? 'btn-register--loading' : ''}}" bindtap="onRegister">
+      <text>{{loading ? '注册中...' : '立即注册'}}</text>
+    </view>
+
+    <!-- 登录入口 -->
+    <view class="login-row">
+      <text class="login-text">已有账号？</text>
+      <text class="login-link" bindtap="onBack">去登录</text>
+    </view>
+  </view>
+</view>

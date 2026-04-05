@@ -1,0 +1,36 @@
+/* ============================================
+   Global CSS Custom Properties (Design Tokens)
+   ============================================ */
+page {
+  --color-primary: #2444eb;
+  --color-primary-dim: #0934e0;
+  --color-primary-container: #8999ff;
+  --color-on-primary: #ffffff;
+  --color-secondary: #8a4c00;
+  --color-secondary-container: #ffc697;
+  --color-on-secondary-container: #6d3b00;
+  --color-tertiary: #0c6a24;
+  --color-tertiary-container: #a4fda4;
+  --color-on-tertiary-container: #00631e;
+  --color-background: #f9f5ff;
+  --color-surface: #f9f5ff;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #f3eeff;
+  --color-surface-container: #eae5ff;
+  --color-surface-container-high: #e3dfff;
+  --color-surface-container-highest: #ddd9ff;
+  --color-on-surface: #2d2a51;
+  --color-on-surface-variant: #5a5781;
+  --color-outline: #75729e;
+  --color-outline-variant: #aca8d7;
+
+  background-color: #f9f5ff;
+  color: #2d2a51;
+  font-family: -apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Hide scrollbar utility */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}

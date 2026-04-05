@@ -1,0 +1,151 @@
+<view class="page page-fade">
+  <top-nav page-title="健康中心" />
+
+  <scroll-view
+    scroll-y
+    class="page-scroll"
+    style="height: calc(100vh - {{navBarHeight}}px); padding-top: {{navBarHeight + 16}}px; box-sizing: border-box"
+    refresher-enabled
+    refresher-triggered="{{isRefreshing}}"
+    bindrefresherrefresh="onRefresh"
+    refresher-background="#f9f5ff"
+    enhanced
+    show-scrollbar="{{false}}"
+  >
+  <view class="content" style="padding-bottom: {{tabBarBottom + 24}}px">
+    <!-- ===== AI 提醒横幅 ===== -->
+    <view class="ai-banner">
+      <view class="ai-banner__body">
+        <view class="ai-banner__top">
+          <image class="ai-banner__icon" src="/assets/icons/brain-white.svg" mode="aspectFit" />
+          <view class="ai-banner__text">
+            <text class="ai-banner__label">智校 AI 健康建议</text>
+            <text class="ai-banner__title">{{aiBannerMsg}}</text>
+          </view>
+        </view>
+        <view class="btn-meditation" bindtap="onMeditationTap">
+          <image class="btn-icon-sm" src="/assets/icons/sparkles-white.svg" mode="aspectFit" />
+          <text>开始冥想</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- ===== 健康评分 + 睡眠记录 ===== -->
+    <view class="metrics-row">
+      <view class="score-card">
+        <text class="score-label">健康评分</text>
+        <view class="score-canvas-wrap">
+          <canvas canvas-id="healthCircle" class="score-canvas" />
+          <text class="score-value">{{healthScore}}</text>
+        </view>
+        <view class="score-status">
+          <image class="score-status-icon" src="/assets/icons/trending-up-tertiary.svg" mode="aspectFit" />
+          <text class="score-status-text">良好</text>
+        </view>
+      </view>
+
+      <view class="sleep-card">
+        <view class="sleep-header">
+          <text class="sleep-label">睡眠记录</text>
+          <text class="sleep-value">7.5h</text>
+        </view>
+        <view class="sleep-bars">
+          <view
+            wx:for="{{sleepBars}}"
+            wx:key="index"
+            class="sleep-bar {{index === sleepBars.length - 1 ? 'sleep-bar--today' : ''}}"
+            style="height: {{item}}%"
+          ></view>
+        </view>
+        <text class="sleep-note">近7日趋势</text>
+      </view>
+    </view>
+
+    <!-- ===== 情绪历史 ===== -->
+    <view class="section">
+      <text class="section-title">情绪历史</text>
+      <view class="emotion-list">
+        <view
+          wx:for="{{emotionHistory}}"
+          wx:key="id"
+          class="emotion-item {{index < emotionHistory.length - 1 ? 'emotion-item--bordered' : ''}}"
+        >
+          <view class="emotion-left">
+            <view class="emotion-icon-wrap emotion-icon-wrap--{{item.color}}">
+              <image class="emotion-icon" src="{{item.icon}}" mode="aspectFit" />
+            </view>
+            <text class="emotion-label">{{item.label}}</text>
+          </view>
+          <text class="emotion-time">{{item.time}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- ===== 打卡按钮 ===== -->
+    <view class="btn-checkin" hover-class="btn-checkin-hover" hover-stay-time="100" bindtap="onCheckInTap">
+      <image class="btn-icon-md" src="/assets/icons/check-circle-white.svg" mode="aspectFit" />
+      <text>{{todayCheckedIn ? '今日已打卡 ✓' : '立即打卡'}}</text>
+    </view>
+
+    <!-- ===== 连续打卡横幅 ===== -->
+    <view class="streak-banner">
+      <image class="streak-icon" src="/assets/icons/flame-tertiary.svg" mode="aspectFit" />
+      <view class="streak-text">
+        <text>你已连续坚持健康打卡 </text>
+        <text class="streak-num">{{streakDays}}</text>
+        <text> 天</text>
+      </view>
+    </view>
+  </view>
+
+  </scroll-view>
+
+  <!-- ===== 情绪打卡弹窗 ===== -->
+  <view class="modal-mask" wx:if="{{showCheckinModal}}" bindtap="onCloseCheckin">
+    <view class="modal-sheet" catchtap="preventClose" style="padding-bottom: {{tabBarBottom + 24}}px">
+      <text class="modal-title">今天感觉怎么样？</text>
+      <text class="modal-sub">选择你此刻的心情状态</text>
+      <view class="emotion-picker">
+        <view
+          wx:for="{{emotionOptions}}"
+          wx:key="label"
+          class="emotion-option {{selectedEmotion === item.label ? 'emotion-option--active' : ''}}"
+          bindtap="onSelectEmotion"
+          data-label="{{item.label}}"
+          data-icon="{{item.icon}}"
+          data-color="{{item.color}}"
+          data-emoji="{{item.emoji}}"
+        >
+          <text class="emotion-emoji">{{item.emoji}}</text>
+          <text class="emotion-name">{{item.label}}</text>
+        </view>
+      </view>
+      <view class="modal-confirm" bindtap="onConfirmCheckin">完成打卡</view>
+    </view>
+  </view>
+
+  <!-- ===== 冥想计时器弹窗 ===== -->
+  <view class="modal-mask" wx:if="{{showMeditationModal}}" bindtap="">
+    <view class="meditation-sheet" catchtap="preventClose" style="padding-bottom: {{tabBarBottom + 24}}px">
+      <text class="meditation-title">🌿 专注冥想</text>
+      <view class="meditation-duration-row">
+        <view
+          wx:for="{{meditationDurations}}"
+          wx:key="index"
+          class="duration-chip {{selectedDuration === item ? 'duration-chip--active' : ''}}"
+          bindtap="onSelectDuration"
+          data-duration="{{item}}"
+        >{{item}}分钟</view>
+      </view>
+      <text class="meditation-timer">{{meditationDisplay}}</text>
+      <text class="meditation-sub">{{meditationRunning ? '专注呼吸，放松身心…' : '选择时长，准备开始'}}</text>
+      <view class="meditation-actions">
+        <view class="btn-med-cancel" bindtap="onStopMeditation">退出</view>
+        <view class="btn-med-action" bindtap="onToggleMeditation">
+          {{meditationRunning ? '暂停' : '开始'}}
+        </view>
+      </view>
+    </view>
+  </view>
+
+</view>

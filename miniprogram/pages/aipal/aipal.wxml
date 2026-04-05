@@ -1,0 +1,214 @@
+<view class="page page-fade">
+  <top-nav page-title="AI搭子" />
+
+  <!-- ===== 紧凑 AI 状态栏 ===== -->
+  <view class="ai-topbar" style="margin-top: {{navBarHeight + 8}}px">
+    <view class="ai-topbar__left">
+      <view class="ai-topbar__avatar-wrap">
+        <image class="ai-topbar__bot-icon" src="/assets/icons/bot-primary.svg" mode="aspectFit" />
+        <view class="ai-topbar__online-dot"></view>
+      </view>
+      <view class="ai-topbar__labels">
+        <text class="ai-topbar__name">智校 AI 搭子</text>
+        <text class="ai-topbar__sub">在线 · 随时为你服务</text>
+      </view>
+    </view>
+    <text class="ai-topbar__greeting">你好，{{displayName}} 👋</text>
+  </view>
+
+  <!-- ===== 聊天消息区 ===== -->
+  <scroll-view
+    scroll-y
+    class="chat-scroll"
+    scroll-into-view="{{scrollToBottom}}"
+    scroll-with-animation
+  >
+    <view class="chat-list" style="padding-bottom: {{chatBottomPad}}px">
+
+      <!-- AI 每日建议卡 -->
+      <view class="daily-card">
+        <view class="daily-card__header">
+          <text class="daily-card__tag">✨ AI每日建议</text>
+        </view>
+        <view wx:if="{{dailyLoading}}" class="daily-card__skeleton">
+          <view class="skeleton-line skeleton-line--long"></view>
+          <view class="skeleton-line skeleton-line--short"></view>
+        </view>
+        <text wx:else class="daily-card__text">"{{dailySuggestion}}"</text>
+        <view class="daily-card__footer" bindtap="onDailySuggestionTap">
+          <text class="daily-card__footer-text">和 AI 聊聊今天的感受 →</text>
+        </view>
+      </view>
+
+      <!-- 情绪快选 -->
+      <view class="mood-bar">
+        <text class="mood-bar-label">你的心情如何？</text>
+        <scroll-view scroll-x class="mood-scroll" enable-flex>
+          <view
+            wx:for="{{moodChips}}"
+            wx:key="label"
+            class="mood-chip"
+            bindtap="onMoodTap"
+            data-text="{{item.text}}"
+          >
+            <text class="mood-chip-emoji">{{item.emoji}}</text>
+            <text class="mood-chip-label">{{item.label}}</text>
+          </view>
+        </scroll-view>
+      </view>
+
+      <!-- 今日课程小卡 -->
+      <view class="course-widget" wx:if="{{todayCourses.length > 0}}">
+        <view class="course-widget-header">
+          <text class="course-widget-title">📅 今日课程</text>
+          <view class="course-widget-more" bindtap="onViewSchedule">查看全部 ›</view>
+        </view>
+        <view class="course-widget-list">
+          <view wx:for="{{todayCourses}}" wx:key="id" class="course-widget-item">
+            <text class="course-widget-time">{{item.startTime}}</text>
+            <view class="course-widget-dot course-widget-dot--{{item.color}}"></view>
+            <text class="course-widget-name">{{item.name}}</text>
+            <text class="course-widget-room">{{item.room}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view
+        wx:for="{{messages}}"
+        wx:key="id"
+        id="msg-{{index}}"
+        class="msg-row msg-row--{{item.role}}"
+      >
+        <!-- Bot 头像 -->
+        <view wx:if="{{item.role === 'bot'}}" class="msg-avatar msg-avatar--bot">
+          <image class="msg-avatar-icon" src="/assets/icons/bot-primary.svg" mode="aspectFit" />
+        </view>
+
+        <!-- 消息气泡 -->
+        <view class="msg-bubble msg-bubble--{{item.role}}">
+          <text class="msg-text msg-text--{{item.role}}">{{item.text}}</text>
+          <view wx:if="{{item.planData}}" class="plan-preview-btn" bindtap="onViewPlan" data-idx="{{index}}">
+            <text class="plan-preview-icon">📅</text>
+            <text class="plan-preview-text">查看完整行程表</text>
+            <text class="plan-preview-arrow">›</text>
+          </view>
+        </view>
+
+        <!-- User 头像 -->
+        <view wx:if="{{item.role === 'user'}}" class="msg-avatar msg-avatar--user">
+          <image wx:if="{{avatarUrl}}" class="msg-avatar-photo" src="{{avatarUrl}}" mode="aspectFill" />
+          <image wx:else class="msg-avatar-icon" src="/assets/icons/user-white.svg" mode="aspectFit" />
+        </view>
+      </view>
+
+      <!-- 打点动画（AI 正在输入） -->
+      <view wx:if="{{isTyping}}" class="msg-row msg-row--bot msg-typing">
+        <view class="msg-avatar msg-avatar--bot">
+          <image class="msg-avatar-icon" src="/assets/icons/bot-primary.svg" mode="aspectFit" />
+        </view>
+        <view class="typing-dots">
+          <view class="dot dot-1"></view>
+          <view class="dot dot-2"></view>
+          <view class="dot dot-3"></view>
+        </view>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- ===== 快捷回复 + 输入栏（固定底部）===== -->
+  <view class="input-area" style="bottom: {{tabBarBottom}}px">
+
+    <!-- 可收缩：图标快捷 + 快捷回复 -->
+    <view wx:if="{{showShortcuts}}" class="shortcuts-panel">
+      <!-- 图标快捷功能 -->
+      <scroll-view scroll-x class="shortcut-scroll" enable-flex>
+        <view
+          wx:for="{{actionShortcuts}}"
+          wx:key="label"
+          class="shortcut-btn"
+          bindtap="onActionShortcut"
+          data-text="{{item.text}}"
+        >
+          <text class="shortcut-emoji">{{item.emoji}}</text>
+          <text class="shortcut-label">{{item.label}}</text>
+        </view>
+      </scroll-view>
+      <!-- 快捷回复 -->
+      <scroll-view scroll-x class="quick-scroll" enable-flex>
+        <view
+          wx:for="{{quickReplies}}"
+          wx:key="index"
+          class="quick-chip"
+          bindtap="onQuickReply"
+          data-text="{{item}}"
+        >
+          <text class="quick-chip-text">{{item}}</text>
+        </view>
+      </scroll-view>
+    </view>
+
+    <!-- 输入框行 -->
+    <view class="input-row">
+      <view class="toggle-btn" bindtap="onToggleShortcuts">
+        <text class="toggle-chevron {{showShortcuts ? 'toggle-chevron--down' : 'toggle-chevron--up'}}">‹</text>
+      </view>
+      <input
+        class="chat-input"
+        placeholder="给 AI 留言..."
+        placeholder-class="chat-input-placeholder"
+        value="{{inputText}}"
+        bindinput="onInputChange"
+        confirm-type="send"
+        bindconfirm="onSend"
+        adjust-position
+      />
+      <view class="send-btn" bindtap="onSend">
+        <image class="send-icon" src="/assets/icons/send-white.svg" mode="aspectFit" />
+      </view>
+    </view>
+  </view>
+
+  <!-- ===== AI 行程规划弹窗 ===== -->
+  <view wx:if="{{showPlanModal}}" class="plan-modal-mask" bindtap="onClosePlan">
+    <view class="plan-modal-sheet" catchtap="preventClose">
+      <view class="plan-modal-header">
+        <text class="plan-modal-title">🗓️ 今日行程规划</text>
+        <view class="plan-modal-x" bindtap="onClosePlan">✕</view>
+      </view>
+      <scroll-view scroll-y class="plan-modal-scroll">
+        <text wx:if="{{currentPlan.summary}}" class="plan-summary">{{currentPlan.summary}}</text>
+        <view wx:if="{{currentPlan.goal}}" class="plan-goal-row">
+          <text class="plan-label">🎯 目标</text>
+          <text class="plan-goal-text">{{currentPlan.goal}}</text>
+        </view>
+        <view wx:if="{{currentPlan.time_blocks.length > 0}}" class="plan-section">
+          <text class="plan-section-title">⏰ 时间安排</text>
+          <view wx:for="{{currentPlan.time_blocks}}" wx:key="index" class="plan-time-row">
+            <view class="plan-time-dot"></view>
+            <text class="plan-time-text">{{item}}</text>
+          </view>
+        </view>
+        <view wx:if="{{currentPlan.steps.length > 0}}" class="plan-section">
+          <text class="plan-section-title">📋 执行步骤</text>
+          <view wx:for="{{currentPlan.steps}}" wx:key="index" class="plan-step-row">
+            <text class="plan-step-num">{{index + 1}}</text>
+            <text class="plan-step-text">{{item}}</text>
+          </view>
+        </view>
+        <view wx:if="{{currentPlan.next_action}}" class="plan-next-row">
+          <text class="plan-label">▶️ 现在就做</text>
+          <text class="plan-next-text">{{currentPlan.next_action}}</text>
+        </view>
+        <view wx:if="{{currentPlan.fallback}}" class="plan-fallback-row">
+          <text class="plan-label">🔄 备选方案</text>
+          <text class="plan-next-text">{{currentPlan.fallback}}</text>
+        </view>
+        <view wx:if="{{currentPlan.follow_up_question}}" class="plan-followup-row">
+          <text class="plan-followup-text">💬 {{currentPlan.follow_up_question}}</text>
+        </view>
+      </scroll-view>
+      <view class="plan-modal-close-btn" bindtap="onClosePlan">关闭</view>
+    </view>
+  </view>
+
+</view>

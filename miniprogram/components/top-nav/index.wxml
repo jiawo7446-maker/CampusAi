@@ -1,0 +1,22 @@
+<view class="top-nav">
+  <!-- 状态栏占位 -->
+  <view style="height: {{statusBarHeight}}px"></view>
+
+  <!-- 导航栏：左侧头像+昵称 · 标题居中 · 右侧胶囊占位 -->
+  <view class="nav-bar">
+    <!-- 左：头像 + 昵称（点击进个人主页） -->
+    <view class="nav-avatar-btn" hover-class="nav-avatar-hover" hover-stay-time="80" bindtap="onAvatarTap">
+      <image wx:if="{{avatarUrl}}" class="nav-avatar-img" src="{{avatarUrl}}" mode="aspectFill" />
+      <view wx:else class="nav-avatar-placeholder">
+        <image class="nav-avatar-icon" src="/assets/icons/user-white.svg" mode="aspectFit" />
+      </view>
+      <text class="nav-username">{{username || '登录'}}</text>
+    </view>
+
+    <!-- 中：动态页面标题 -->
+    <text class="nav-title">{{pageTitle || '智校'}}</text>
+
+    <!-- 右：占位（与微信胶囊等宽） -->
+    <view class="nav-capsule-spacer"></view>
+  </view>
+</view>

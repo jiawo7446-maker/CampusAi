@@ -1,0 +1,91 @@
+/* ===== 外层容器 ===== */
+.top-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 100;
+  box-sizing: border-box;
+  background: linear-gradient(90deg, #2444eb 0%, #5566f8 60%, #8999ff 100%);
+  box-shadow: 0 4rpx 20rpx rgba(36, 68, 235, 0.22);
+}
+
+/* ===== 单行导航栏 ===== */
+.nav-bar {
+  height: 92rpx;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20rpx 0 16rpx;
+  position: relative;
+}
+
+/* ===== 居中标题（绝对定位） ===== */
+.nav-title {
+  position: absolute;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 34rpx;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: 1rpx;
+  pointer-events: none;
+}
+
+/* ===== 左：头像 + 昵称按钮 ===== */
+.nav-avatar-btn {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10rpx;
+  z-index: 1;
+  flex-shrink: 0;
+  max-width: 200rpx;
+}
+
+.nav-username {
+  font-size: 24rpx;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.92);
+  max-width: 130rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nav-avatar-hover {
+  opacity: 0.75;
+}
+
+.nav-avatar-img {
+  width: 60rpx;
+  height: 60rpx;
+  border-radius: 9999rpx;
+  border: 2.5rpx solid rgba(255, 255, 255, 0.7);
+  display: block;
+}
+
+.nav-avatar-placeholder {
+  width: 60rpx;
+  height: 60rpx;
+  border-radius: 9999rpx;
+  background-color: rgba(255, 255, 255, 0.22);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2.5rpx solid rgba(255, 255, 255, 0.55);
+}
+
+.nav-avatar-icon {
+  width: 34rpx;
+  height: 34rpx;
+  opacity: 0.9;
+}
+
+/* ===== 右：占位（与微信胶囊等宽） ===== */
+.nav-capsule-spacer {
+  width: 184rpx;
+  flex-shrink: 0;
+}

@@ -1,0 +1,84 @@
+<view class="page">
+
+  <!-- 顶部导航（fixed）-->
+  <view class="food-nav">
+    <view style="height: {{statusBarHeight}}px" />
+    <view class="food-nav-row">
+      <view class="nav-back" bindtap="onBack">
+        <text class="nav-back-arrow">‹</text>
+      </view>
+      <text class="nav-title">今日美食推荐</text>
+      <view class="nav-placeholder" />
+    </view>
+  </view>
+
+  <scroll-view scroll-y class="scroll-body">
+    <!-- 镜像 spacer：与导航杠结构完全相同，确保内容不被遗挡 -->
+    <view style="height: {{statusBarHeight}}px" />
+    <view style="height: 88rpx" />
+
+    <!-- AI 分析横幅 -->
+    <view class="ai-banner">
+      <view class="ai-banner-top">
+        <text class="ai-banner-icon">🤖</text>
+        <text class="ai-banner-label">智校 AI 营养分析</text>
+      </view>
+      <view class="ai-stats-row">
+        <view class="ai-stat-item">
+          <text class="ai-stat-num">1800</text>
+          <text class="ai-stat-lbl">千卡目标</text>
+        </view>
+        <view class="ai-stat-sep" />
+        <view class="ai-stat-item">
+          <text class="ai-stat-num ai-stat-green">620</text>
+          <text class="ai-stat-lbl">已摄入</text>
+        </view>
+        <view class="ai-stat-sep" />
+        <view class="ai-stat-item">
+          <text class="ai-stat-num">380</text>
+          <text class="ai-stat-lbl">已消耗</text>
+        </view>
+      </view>
+      <text class="ai-insight-text">💡 午餐建议高蛋白、中碳水，帮助肌肉恢复并维持下午专注力</text>
+    </view>
+
+    <!-- 食物卡片列表 -->
+    <view class="food-list">
+      <view wx:for="{{foods}}" wx:key="id" class="food-card">
+
+        <!-- 左侧图片 + 右侧信息的横排布局 -->
+        <view class="food-card-top">
+          <view class="food-img-wrap">
+            <image class="food-image" src="{{item.image}}" mode="aspectFill" />
+            <view class="food-badge" style="background-color: {{item.badgeColor}}">{{item.badge}}</view>
+          </view>
+          <view class="food-info">
+            <view class="food-header-row">
+              <text class="food-name">{{item.emoji}} {{item.name}}</text>
+              <text class="food-price">{{item.price}}</text>
+            </view>
+            <text class="food-desc">{{item.desc}}</text>
+            <view class="food-tags-row">
+              <view wx:for="{{item.tags}}" wx:key="*this" wx:for-item="tag" class="tag">{{tag}}</view>
+            </view>
+            <view class="food-meta-row">
+              <text class="meta-text">🔥 {{item.calories}}</text>
+              <text class="meta-sep">·</text>
+              <text class="meta-text">📍 {{item.location}}</text>
+            </view>
+          </view>
+        </view>
+
+        <!-- 底部操作行 -->
+        <view class="card-footer">
+          <view class="btn-ai" bindtap="onAiReasonTap" data-id="{{item.id}}">✨ AI理由</view>
+          <view class="btn-order" bindtap="onOrderTap" data-id="{{item.id}}">立即点餐</view>
+        </view>
+
+      </view>
+    </view>
+
+    <view class="footer-tip">以上推荐由 AI 根据你的健康数据智能生成 🌱</view>
+
+  </scroll-view>
+</view>

@@ -1,0 +1,207 @@
+<view class="page">
+  <!-- ===== 自定义顶部返回栏 ===== -->
+  <view class="custom-nav" style="padding-top: {{statusBarHeight}}px">
+    <view class="custom-nav-row">
+      <view class="nav-back" bindtap="onBack" hover-class="nav-back-hover" hover-stay-time="80">
+        <text class="nav-back-arrow">←</text>
+        <text class="nav-back-text">返回</text>
+      </view>
+      <text class="nav-title-text">个人主页</text>
+      <view class="nav-placeholder"></view>
+    </view>
+  </view>
+
+  <!-- ===== 头部渐变区 ===== -->
+  <view class="hero" style="padding-top: {{navHeight}}px">
+    <view class="hero-blob hero-blob--1"></view>
+    <view class="hero-blob hero-blob--2"></view>
+
+    <!-- 头像 -->
+    <view class="avatar-outer" bindtap="onChangeAvatar" hover-class="avatar-outer-hover" hover-stay-time="80">
+      <image wx:if="{{avatarUrl}}" class="avatar-img" src="{{avatarUrl}}" mode="aspectFill" />
+      <view wx:else class="avatar-placeholder">
+        <image class="avatar-default-icon" src="/assets/icons/user-white.svg" mode="aspectFit" />
+      </view>
+      <view class="avatar-camera-badge">
+        <text class="avatar-camera-icon">📷</text>
+      </view>
+    </view>
+
+    <!-- 昵称 -->
+    <view class="username-row" bindtap="onEditUsername">
+      <text class="username-text">{{username || '点击设置昵称'}}</text>
+      <text class="username-edit-icon">✏️</text>
+    </view>
+    <text class="user-sub">{{phone || '校园智慧生活圈成员'}}</text>
+  </view>
+
+  <!-- ===== 内容区 ===== -->
+  <view class="content">
+
+    <!-- 数据统计 -->
+    <view class="stats-card">
+      <view class="stat-item">
+        <text class="stat-num">{{stats.days}}</text>
+        <text class="stat-label">加入天数</text>
+      </view>
+      <view class="stat-divider"></view>
+      <view class="stat-item">
+        <text class="stat-num">{{stats.posts}}</text>
+        <text class="stat-label">发布帖子</text>
+      </view>
+      <view class="stat-divider"></view>
+      <view class="stat-item">
+        <text class="stat-num">{{stats.hugs}}</text>
+        <text class="stat-label">收到拥抱</text>
+      </view>
+      <view class="stat-divider"></view>
+      <view class="stat-item">
+        <text class="stat-num">{{stats.checkins}}</text>
+        <text class="stat-label">健康打卡</text>
+      </view>
+    </view>
+
+    <!-- 我的内容 Tab -->
+    <view class="profile-tab-bar">
+      <view
+        class="profile-tab {{activeTab === 'posts' ? 'profile-tab--active' : ''}}"
+        bindtap="onTabSwitch" data-tab="posts"
+      >我的动态</view>
+      <view
+        class="profile-tab {{activeTab === 'saves' ? 'profile-tab--active' : ''}}"
+        bindtap="onTabSwitch" data-tab="saves"
+      >我的收藏</view>
+    </view>
+
+    <!-- 我的动态 -->
+    <view wx:if="{{activeTab === 'posts'}}" class="profile-posts">
+      <view wx:if="{{myPosts.length === 0}}" class="profile-empty">
+        <text class="profile-empty-icon">🌱</text>
+        <text class="profile-empty-text">还没有公开发布的动态\n关闭匿名后发布即可收录</text>
+      </view>
+      <view wx:for="{{myPosts}}" wx:key="id" class="profile-post-item">
+        <view class="profile-post-top">
+          <text class="profile-post-mood">{{item.mood || ''}}</text>
+          <text class="profile-post-time">{{item.time}}</text>
+        </view>
+        <text class="profile-post-content">{{item.content}}</text>
+      </view>
+    </view>
+
+    <!-- 我的收藏 -->
+    <view wx:if="{{activeTab === 'saves'}}" class="profile-posts">
+      <view wx:if="{{savedPosts.length === 0}}" class="profile-empty">
+        <text class="profile-empty-icon">🔖</text>
+        <text class="profile-empty-text">还没有收藏的内容\n在树洞页点击 ☆ 即可收藏</text>
+      </view>
+      <view wx:for="{{savedPosts}}" wx:key="id" class="profile-post-item">
+        <view class="profile-post-top">
+          <text class="profile-post-author">{{item.author}}</text>
+          <text class="profile-post-time">{{item.time}}</text>
+        </view>
+        <text class="profile-post-content">{{item.content}}</text>
+      </view>
+    </view>
+
+    <!-- 功能入口 -->
+    <view class="section-title-text">学习工具</view>
+    <view class="settings-card">
+      <view class="settings-item" bindtap="onGoSchedule" hover-class="settings-item-hover" hover-stay-time="80">
+        <view class="settings-item__left">
+          <view class="settings-icon-wrap settings-icon-wrap--primary">
+            <text class="settings-icon">📅</text>
+          </view>
+          <view>
+            <text class="settings-item__label">我的课程表</text>
+            <text style="font-size:22rpx;color:#75729e;display:block;margin-top:4rpx">管理课程 · AI规划碎片时间</text>
+          </view>
+        </view>
+        <text class="settings-item__arrow">›</text>
+      </view>
+    </view>
+
+    <!-- 账号设置标题 -->
+    <view class="section-title-text">账号设置</view>
+    <view class="settings-card">
+      <view class="settings-item" bindtap="onChangeAvatar" hover-class="settings-item-hover" hover-stay-time="80">
+        <view class="settings-item__left">
+          <view class="settings-icon-wrap settings-icon-wrap--primary">
+            <text class="settings-icon">🖼️</text>
+          </view>
+          <text class="settings-item__label">修改头像</text>
+        </view>
+        <text class="settings-item__arrow">›</text>
+      </view>
+
+      <view class="settings-divider"></view>
+
+      <view class="settings-item" bindtap="onEditUsername" hover-class="settings-item-hover" hover-stay-time="80">
+        <view class="settings-item__left">
+          <view class="settings-icon-wrap settings-icon-wrap--secondary">
+            <text class="settings-icon">✏️</text>
+          </view>
+          <text class="settings-item__label">修改昵称</text>
+        </view>
+        <view class="settings-item__right">
+          <text class="settings-item__value">{{username}}</text>
+          <text class="settings-item__arrow">›</text>
+        </view>
+      </view>
+
+      <view class="settings-divider"></view>
+
+      <view class="settings-item" bindtap="onNotify" hover-class="settings-item-hover" hover-stay-time="80">
+        <view class="settings-item__left">
+          <view class="settings-icon-wrap settings-icon-wrap--tertiary">
+            <text class="settings-icon">🔔</text>
+          </view>
+          <text class="settings-item__label">通知设置</text>
+        </view>
+        <text class="settings-item__arrow">›</text>
+      </view>
+    </view>
+
+    <view class="section-title-text">其他</view>
+    <view class="settings-card">
+      <view class="settings-item" bindtap="onAbout" hover-class="settings-item-hover" hover-stay-time="80">
+        <view class="settings-item__left">
+          <view class="settings-icon-wrap settings-icon-wrap--surface">
+            <text class="settings-icon">ℹ️</text>
+          </view>
+          <text class="settings-item__label">关于 智校</text>
+        </view>
+        <text class="settings-item__arrow">›</text>
+      </view>
+    </view>
+
+    <!-- 退出登录 -->
+    <view class="btn-logout" bindtap="onLogout" hover-class="btn-logout-hover" hover-stay-time="80">
+      <text class="btn-logout-text">退出登录</text>
+    </view>
+
+    <view style="height: 48rpx"></view>
+  </view>
+
+  <!-- ===== 修改昵称弹窗 ===== -->
+  <view class="modal-mask" wx:if="{{showEditModal}}" bindtap="onCancelEdit">
+    <view class="edit-sheet" catchtap="preventClose">
+      <text class="edit-title">修改昵称</text>
+      <view class="edit-input-wrap">
+        <input
+          class="edit-input"
+          placeholder="请输入新昵称"
+          placeholder-class="edit-placeholder"
+          value="{{editName}}"
+          bindinput="onEditInput"
+          maxlength="20"
+          focus="{{showEditModal}}"
+        />
+      </view>
+      <text class="edit-hint">昵称长度 2-20 个字符</text>
+      <view class="edit-actions">
+        <view class="edit-btn edit-btn--cancel" bindtap="onCancelEdit">取消</view>
+        <view class="edit-btn edit-btn--confirm" bindtap="onConfirmEdit">保存</view>
+      </view>
+    </view>
+  </view>
+</view>

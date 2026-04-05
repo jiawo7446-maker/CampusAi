@@ -1,0 +1,85 @@
+.tab-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: flex-end;
+  padding: 12rpx 8rpx 0;
+  background-color: #ffffff;
+  box-shadow: 0 -2rpx 0 rgba(79, 70, 229, 0.10), 0 -12rpx 40rpx rgba(45, 42, 81, 0.08);
+  border-top-left-radius: 40rpx;
+  border-top-right-radius: 40rpx;
+  z-index: 50;
+  box-sizing: border-box;
+}
+
+.tab-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 4rpx 20rpx 0;
+  min-width: 96rpx;
+  position: relative;
+}
+
+.tab-item-hover {
+  opacity: 0.7;
+}
+
+/* 图标包裹：选中时显示胶囊背景 */
+.tab-icon-wrap {
+  width: 80rpx;
+  height: 64rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 24rpx;
+  transition: background 0.2s;
+}
+
+.tab-item--active .tab-icon-wrap {
+  background-color: rgba(79, 70, 229, 0.10);
+}
+
+.tab-icon {
+  width: 44rpx;
+  height: 44rpx;
+  transition: transform 0.15s;
+}
+
+.tab-item--active .tab-icon {
+  width: 50rpx;
+  height: 50rpx;
+}
+
+.tab-text {
+  font-size: 20rpx;
+  font-weight: 500;
+  margin-top: 4rpx;
+  color: rgba(90, 87, 129, 0.65);
+}
+
+.tab-item--active .tab-text {
+  color: #4f46e5;
+  font-weight: 700;
+  font-size: 21rpx;
+}
+
+/* 底部圆点指示器 */
+.tab-dot {
+  width: 8rpx;
+  height: 8rpx;
+  border-radius: 9999rpx;
+  background-color: transparent;
+  margin-top: 6rpx;
+  margin-bottom: 4rpx;
+}
+
+.tab-dot--active {
+  background-color: #7c3aed;
+  width: 24rpx;
+}

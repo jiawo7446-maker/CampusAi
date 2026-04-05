@@ -1,0 +1,34 @@
+{
+  "pages": [
+    "pages/login/login",
+    "pages/register/register",
+    "pages/profile/profile",
+    "pages/pulse/pulse",
+    "pages/helper/helper",
+    "pages/sanctuary/sanctuary",
+    "pages/wellness/wellness",
+    "pages/aipal/aipal",
+    "pages/food/food",
+    "pages/schedule/schedule"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationStyle": "custom",
+    "backgroundColor": "#f9f5ff"
+  },
+  "tabBar": {
+    "custom": true,
+    "color": "#5a5781",
+    "selectedColor": "#2444eb",
+    "backgroundColor": "#f9f5ff",
+    "list": [
+      { "pagePath": "pages/pulse/pulse", "text": "脉动" },
+      { "pagePath": "pages/helper/helper", "text": "互助" },
+      { "pagePath": "pages/sanctuary/sanctuary", "text": "树洞" },
+      { "pagePath": "pages/wellness/wellness", "text": "健康" },
+      { "pagePath": "pages/aipal/aipal", "text": "AI搭子" }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}
