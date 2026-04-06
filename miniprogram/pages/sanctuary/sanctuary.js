@@ -30,6 +30,7 @@ Page({
     ],
     savedPostIds: [],
     likedPostIds: [],
+    huggedPostIds: [],
     isLoading: true,
     isRefreshing: false,
     activeFilter: '全部动态',
@@ -248,11 +249,13 @@ Page({
     const phone = wx.getStorageSync('phone') || 'guest'
     const savedPostIds = wx.getStorageSync(`savedPostIds_${phone}`) || []
     const likedPostIds = wx.getStorageSync(`likedPostIds_${phone}`) || []
+    const huggedPostIds = wx.getStorageSync(`huggedPostIds_${phone}`) || []
     this.setData({
       navBarHeight: app.globalData.navBarHeight || 100,
       tabBarBottom: app.globalData.tabBarBottom || 80,
       savedPostIds,
-      likedPostIds
+      likedPostIds,
+      huggedPostIds
     })
     this._fetchPosts()
   },
@@ -281,8 +284,8 @@ Page({
               commentList,
               comments: commentList.length,
               liked: likedIds.includes(p.id),
-              actionText: '抱抱TA',
-              hugged: false,
+              hugged: this.data.huggedPostIds.includes(p.id),
+              actionText: this.data.huggedPostIds.includes(p.id) ? '已抱抱 ✓' : '抱抱TA',
               hideFooter: false,
               saved: savedIds.includes(p.id)
             }
@@ -648,6 +651,11 @@ Page({
           }
           wx.vibrateShort({ type: 'medium' })
           wx.showToast({ title: '拥抱已送出 💛', icon: 'none', duration: 1500 })
+          wx.setStorageSync('statHugs', (wx.getStorageSync('statHugs') || 0) + 1)
+          const phone2 = wx.getStorageSync('phone') || 'guest'
+          const newHuggedIds = [...this.data.huggedPostIds, id]
+          this.setData({ huggedPostIds: newHuggedIds })
+          wx.setStorageSync(`huggedPostIds_${phone2}`, newHuggedIds)
           // Notify the post author on backend (non-anonymous posts only)
           const huggedPost = idx2 !== -1 ? this.data.posts[idx2] : null
           if (huggedPost && huggedPost.authorId) {

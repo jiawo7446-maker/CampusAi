@@ -4,8 +4,7 @@
   <view class="custom-nav" style="padding-top: {{statusBarHeight}}px">
     <view class="nav-row">
       <view class="nav-back" bindtap="onBack" hover-class="nav-back-hover" hover-stay-time="80">
-        <text class="nav-back-arrow">‹</text>
-        <text class="nav-back-text">返回</text>
+        <image class="nav-back-icon" src="/assets/icons/chevron-left-white.svg" mode="aspectFit" />
       </view>
       <text class="nav-title">我的课程表</text>
       <view class="nav-add" bindtap="onAddCourse" hover-class="nav-add-hover" hover-stay-time="80">

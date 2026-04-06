@@ -12,11 +12,7 @@ const DEFAULT_WELLNESS = {
   userStats: {},
   lastCheckinDate: null,
   sleepRecord: [40, 60, 30, 80, 50, 90, 75],
-  emotionHistory: [
-    { id: 1, label: '元气满满', emoji: '⚡', time: '今天 09:30' },
-    { id: 2, label: '平静',     emoji: '🍃', time: '昨天 21:00' },
-    { id: 3, label: '疲惫',     emoji: '😴', time: '昨天 14:20' }
-  ],
+  emotionHistory: [],
   checkinState: {}
 }
 
@@ -35,6 +31,15 @@ function saveWellness() {
 const checkinDateByUser = new Map()
 
 let wellnessData = loadWellness()
+// Migrate: remove hardcoded fake default emotion entries (ids 1, 2, 3)
+if (Array.isArray(wellnessData.emotionHistory)) {
+  const FAKE_IDS = new Set([1, 2, 3])
+  const cleaned = wellnessData.emotionHistory.filter(e => !FAKE_IDS.has(e.id))
+  if (cleaned.length !== wellnessData.emotionHistory.length) {
+    wellnessData.emotionHistory = cleaned
+    saveWellness()
+  }
+}
 // Migrate: move legacy global streak into userStats['default']
 if (!wellnessData.userStats) wellnessData.userStats = {}
 if (wellnessData.streakDays != null && !wellnessData.userStats['default']) {

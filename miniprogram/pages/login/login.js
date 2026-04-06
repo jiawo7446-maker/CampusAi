@@ -51,6 +51,7 @@ Page({
       wx.setStorageSync('username', nickname)
       if (userId) wx.setStorageSync('userId', userId)
       if (phone) wx.setStorageSync('phone', phone)
+      if (!wx.getStorageSync('joinedAt')) wx.setStorageSync('joinedAt', Date.now())
       this.setData({ loading: false })
       wx.switchTab({ url: '/pages/pulse/pulse' })
     }

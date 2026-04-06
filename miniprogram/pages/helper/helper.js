@@ -13,6 +13,7 @@ Page({
     showDetailModal: false,
     detailTask: {},
     acceptedCount: 0,
+    acceptedTotal: 0,
     taskTypes: ['餐饮代购', '物流搬运', '跑腿/借用', '学习互助', '其他'],
     publishForm: { type: '餐饮代购', desc: '', location: '', reward: '' },
     tasks: [
@@ -43,7 +44,9 @@ Page({
     const cached = wx.getStorageSync('cachedTasks')
     if (cached && Array.isArray(cached) && cached.length > 0) {
       const tasks = cached.map(t => this._mapTask(t))
-      this.setData({ tasks, acceptedCount: tasks.filter(t => t.accepted).length }, () => this._updateDisplayTasks())
+      const acceptedCount = tasks.filter(t => t.accepted && !t.completed).length
+      const acceptedTotal = tasks.filter(t => t.accepted).length
+      this.setData({ tasks, acceptedCount, acceptedTotal }, () => this._updateDisplayTasks())
     } else {
       this._updateDisplayTasks()
     }
@@ -60,8 +63,9 @@ Page({
           const raw = res.data.tasks
           wx.setStorageSync('cachedTasks', raw)
           const tasks = raw.map(t => this._mapTask(t))
-          const acceptedCount = tasks.filter(t => t.accepted).length
-          this.setData({ tasks, acceptedCount }, () => this._updateDisplayTasks())
+          const acceptedCount = tasks.filter(t => t.accepted && !t.completed).length
+          const acceptedTotal = tasks.filter(t => t.accepted).length
+          this.setData({ tasks, acceptedCount, acceptedTotal }, () => this._updateDisplayTasks())
         }
       },
       fail: () => {
@@ -86,7 +90,8 @@ Page({
       avatarBg: COLORS[t.id % COLORS.length] || '#6366f1',
       avatarInitial: initial,
       tagColor: TAG_COLOR[t.tag] || 'tertiary',
-      tagIcon: TAG_ICON[t.tag] || '/assets/icons/shopping-bag-white.svg'
+      tagIcon: TAG_ICON[t.tag] || '/assets/icons/shopping-bag-white.svg',
+      done: !!t.completed
     }
   },
   onShow() {
@@ -129,7 +134,11 @@ Page({
       cancelText: '还没',
       success: (res) => {
         if (!res.confirm) return
-        this.setData({ [`tasks[${idx}].done`]: true }, () => this._updateDisplayTasks())
+        this.setData({
+          [`tasks[${idx}].done`]: true,
+          [`tasks[${idx}].completed`]: true,
+          acceptedCount: Math.max(0, this.data.acceptedCount - 1)
+        }, () => this._updateDisplayTasks())
         wx.vibrateShort({ type: 'medium' })
         wx.showToast({ title: '任务已完成 🎉', icon: 'success', duration: 2000 })
         wx.setStorageSync('statTasks', (wx.getStorageSync('statTasks') || 0) + 1)
@@ -179,7 +188,8 @@ Page({
         if (res.confirm) {
           const patch = {
             [`tasks[${idx}].accepted`]: true,
-            acceptedCount: this.data.acceptedCount + 1
+            acceptedCount: this.data.acceptedCount + 1,
+            acceptedTotal: this.data.acceptedTotal + 1
           }
           if (this.data.showDetailModal) patch.detailTask = { ...this.data.detailTask, accepted: true }
           this.setData(patch)

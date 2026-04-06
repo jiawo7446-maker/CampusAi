@@ -15,8 +15,16 @@
   <view class="content" style="padding-bottom: {{tabBarBottom + 24}}px">
     <!-- ===== 标题区域 ===== -->
     <view class="section">
-      <text class="hero-title">智校为你推荐</text>
-      <text class="hero-sub">AI 分析校园动态，个性化生活建议</text>
+      <view class="hero-card">
+        <view class="hero-card__deco1"></view>
+        <view class="hero-card__deco2"></view>
+        <view class="hero-badge">
+          <text class="hero-badge-dot"></text>
+          <text class="hero-badge-text">AI 智能推荐</text>
+        </view>
+        <text class="hero-title">智校为你推荐</text>
+        <text class="hero-sub">AI 分析校园动态，个性化生活建议</text>
+      </view>
     </view>
 
     <!-- ===== 今日流程 ===== -->

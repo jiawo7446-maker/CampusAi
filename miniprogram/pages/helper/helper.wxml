@@ -102,7 +102,7 @@
     </scroll-view>
 
     <!-- ===== 已接受任务 ===== -->
-    <view wx:if="{{acceptedCount > 0}}" class="accepted-section">
+    <view wx:if="{{acceptedTotal > 0}}" class="accepted-section">
       <text class="accepted-title">我接受的任务 ({{acceptedCount}})</text>
       <view class="accepted-list">
         <view

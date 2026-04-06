@@ -76,6 +76,13 @@
   font-weight: 500;
 }
 
+.ai-topbar__right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8rpx;
+}
+
 .ai-topbar__greeting {
   font-size: 26rpx;
   font-weight: 600;
@@ -85,6 +92,22 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.ai-topbar__clear {
+  background: rgba(99, 102, 241, 0.08);
+  border-radius: 9999rpx;
+  padding: 6rpx 20rpx;
+}
+
+.ai-topbar__clear--hover {
+  opacity: 0.6;
+}
+
+.ai-topbar__clear-text {
+  font-size: 22rpx;
+  color: #6366f1;
+  font-weight: 500;
 }
 
 /* ===== AI 每日建议卡 ===== */

@@ -3,8 +3,8 @@
   <view class="reg-hero">
     <view class="hero-blob hero-blob--1"></view>
     <view class="hero-blob hero-blob--2"></view>
-    <view class="back-btn" bindtap="onBack">
-      <text class="back-text">← 返回登录</text>
+    <view class="back-btn" bindtap="onBack" hover-class="back-btn-hover" hover-stay-time="80">
+      <image class="back-icon" src="/assets/icons/chevron-left-white.svg" mode="aspectFit" />
     </view>
     <text class="hero-title">创建账号</text>
     <text class="hero-sub">加入智校，开启你的 AI 校园生活</text>
@@ -66,8 +66,8 @@
           bindblur="onBlur"
           data-field="pwd"
         />
-        <view class="pwd-toggle" bindtap="onTogglePwd">
-          <text class="pwd-toggle-text">{{showPwd ? '隐藏' : '显示'}}</text>
+        <view class="pwd-toggle" bindtap="onTogglePwd" hover-class="pwd-toggle-hover" hover-stay-time="80">
+          <image class="pwd-toggle-icon" src="{{showPwd ? '/assets/icons/eye-off-primary.svg' : '/assets/icons/eye-primary.svg'}}" mode="aspectFit" />
         </view>
       </view>
     </view>

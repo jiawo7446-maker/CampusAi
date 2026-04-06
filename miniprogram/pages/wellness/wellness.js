@@ -9,11 +9,7 @@ Page({
     streakDays: 0,
     todayCheckedIn: false,
     sleepBars: [40, 60, 30, 80, 50, 90, 75],
-    emotionHistory: [
-      { id: 1, icon: '/assets/icons/zap-secondary.svg',    label: '元气满满', time: '今天 09:30', color: 'secondary' },
-      { id: 2, icon: '/assets/icons/flower2-tertiary.svg', label: '平静',     time: '昨天 21:00', color: 'tertiary' },
-      { id: 3, icon: '/assets/icons/moon.svg',             label: '疲惫',     time: '昨天 14:20', color: 'surface' }
-    ],
+    emotionHistory: [],
     // Check-in modal
     showCheckinModal: false,
     selectedEmotion: '',

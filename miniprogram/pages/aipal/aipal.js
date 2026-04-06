@@ -115,12 +115,24 @@ Page({
       onFail: () => {}
     })
   },
+  _saveChatHistory(messages) {
+    const phone = wx.getStorageSync('phone') || 'guest'
+    const toSave = messages.slice(-20).map(m => ({ id: m.id, role: m.role, text: m.text }))
+    wx.setStorageSync(`chatHistory_${phone}`, toSave)
+  },
+  _loadChatHistory() {
+    const phone = wx.getStorageSync('phone') || 'guest'
+    const saved = wx.getStorageSync(`chatHistory_${phone}`)
+    if (Array.isArray(saved) && saved.length > 0) return saved
+    return null
+  },
   onLoad() {
     const tabBarBottom = app.globalData.tabBarBottom || 80
     const safeAreaBottom = app.globalData.safeAreaBottom || 0
     const username = app.globalData.username || wx.getStorageSync('username') || ''
     const avatarUrl = app.globalData.avatarUrl || wx.getStorageSync('avatarUrl') || ''
     const displayName = this._buildDisplayName()
+    const savedMessages = this._loadChatHistory()
     this.setData({
       navBarHeight: app.globalData.navBarHeight || 100,
       tabBarBottom,
@@ -128,7 +140,8 @@ Page({
       chatBottomPad: tabBarBottom + 268 + safeAreaBottom,
       username,
       displayName,
-      avatarUrl
+      avatarUrl,
+      messages: savedMessages || this.data.messages
     })
     this._loadTodayCourses()
     this._loadDailySuggestion()
@@ -178,6 +191,7 @@ Page({
     let messages = [...this.data.messages, userMsg]
     if (messages.length > 40) messages = messages.slice(-40)
     this.setData({ messages, inputText: '', isTyping: true })
+    this._saveChatHistory(messages)
     this.scrollToEnd()
     this._fetchAIReply(text, messages)
   },
@@ -275,6 +289,7 @@ ${contextBlock}`
     const botMsg = { id: Date.now() + 1, role: 'bot', text, planData: planData || null }
     const messages = [...this.data.messages, botMsg]
     this.setData({ messages, isTyping: false })
+    this._saveChatHistory(messages)
     this.scrollToEnd()
   },
   onViewPlan(e) {
@@ -339,6 +354,22 @@ ${contextBlock}`
   onQuickReply(e) {
     const { text } = e.currentTarget.dataset
     this.setData({ inputText: text }, () => this.onSend())
+  },
+  onClearChat() {
+    wx.showModal({
+      title: '清空聊天记录',
+      content: '确认清空所有对话记录？',
+      confirmText: '清空',
+      cancelText: '取消',
+      success: (res) => {
+        if (!res.confirm) return
+        const welcome = [{ id: 1, role: 'bot', text: '你好！我是智校 AI 搭子 👋 我可以帮你规划时间、推荐美食、疏导情绪或查询校园资讯。今天想聊什么？' }]
+        this.setData({ messages: welcome })
+        const phone = wx.getStorageSync('phone') || 'guest'
+        wx.removeStorageSync(`chatHistory_${phone}`)
+        wx.vibrateShort({ type: 'light' })
+      }
+    })
   },
   onPlusTap() {
     wx.showActionSheet({

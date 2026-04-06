@@ -13,7 +13,12 @@
         <text class="ai-topbar__sub">在线 · 随时为你服务</text>
       </view>
     </view>
-    <text class="ai-topbar__greeting">你好，{{displayName}} 👋</text>
+    <view class="ai-topbar__right">
+      <text class="ai-topbar__greeting">你好，{{displayName}} 👋</text>
+      <view class="ai-topbar__clear" bindtap="onClearChat" hover-class="ai-topbar__clear--hover" hover-stay-time="80">
+        <text class="ai-topbar__clear-text">清空</text>
+      </view>
+    </view>
   </view>
 
   <!-- ===== 聊天消息区 ===== -->

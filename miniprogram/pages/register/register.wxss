@@ -38,14 +38,23 @@
 }
 
 .back-btn {
-  align-self: flex-start;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 72rpx;
+  height: 72rpx;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 9999rpx;
   margin-bottom: 32rpx;
 }
 
-.back-text {
-  font-size: 26rpx;
-  color: rgba(255, 255, 255, 0.85);
-  font-weight: 600;
+.back-btn-hover {
+  background-color: rgba(255, 255, 255, 0.35);
+}
+
+.back-icon {
+  width: 40rpx;
+  height: 40rpx;
 }
 
 .hero-title {
@@ -128,14 +137,22 @@
 }
 
 .pwd-toggle {
-  padding: 8rpx 0 8rpx 16rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56rpx;
+  height: 56rpx;
   flex-shrink: 0;
+  border-radius: 9999rpx;
 }
 
-.pwd-toggle-text {
-  font-size: 24rpx;
-  font-weight: 600;
-  color: #2444eb;
+.pwd-toggle-hover {
+  background-color: rgba(36, 68, 235, 0.08);
+}
+
+.pwd-toggle-icon {
+  width: 40rpx;
+  height: 40rpx;
 }
 
 /* ===== 密码强度 ===== */

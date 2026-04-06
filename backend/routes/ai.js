@@ -68,6 +68,7 @@ router.post('/chat', async (req, res) => {
     const msgs = [
       { role: 'system', content: sysContent },
       ...history
+        .slice(-20)
         .filter(m => m && ['user', 'bot', 'assistant'].includes(m.role) && m.content)
         .map(m => ({ role: m.role === 'bot' ? 'assistant' : m.role, content: String(m.content).slice(0, 1000) })),
       { role: 'user', content: message }

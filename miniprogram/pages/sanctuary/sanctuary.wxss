@@ -506,11 +506,18 @@
 }
 
 .comment-back {
-  font-size: 28rpx;
-  font-weight: 600;
-  color: #2444eb;
-  padding: 8rpx 0;
-  min-width: 96rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 72rpx;
+  height: 72rpx;
+  background-color: rgba(36, 68, 235, 0.08);
+  border-radius: 9999rpx;
+}
+
+.comment-back-icon {
+  width: 38rpx;
+  height: 38rpx;
 }
 
 .comment-header-placeholder {

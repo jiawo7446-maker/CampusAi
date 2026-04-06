@@ -167,7 +167,9 @@
   <view class="modal-mask" wx:if="{{showCommentModal}}" bindtap="onCloseComment">
     <view class="comment-sheet" catchtap="preventClose" style="padding-bottom: {{tabBarBottom + 24}}px">
       <view class="comment-header">
-        <view class="comment-back" bindtap="onCloseComment">‹ 返回</view>
+        <view class="comment-back" bindtap="onCloseComment">
+          <image class="comment-back-icon" src="/assets/icons/chevron-left-primary.svg" mode="aspectFit" />
+        </view>
         <text class="comment-title">评论</text>
         <view class="comment-header-placeholder"></view>
       </view>
